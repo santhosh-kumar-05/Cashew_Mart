@@ -1,0 +1,11 @@
+.nav-link {
+  transition: 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #1a8f4b !important;
+}
+
+.navbar {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}

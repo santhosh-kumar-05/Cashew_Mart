@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Overflow Demo</title>
+  <style>
+    .box {
+      width: 180px;
+      height: 60px;
+      border: 2px solid #000;
+      margin: 20px 0;
+      padding: 5px;
+    }
+
+    h2 {
+      margin-top: 40px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>CSS Overflow Demo</h1>
+
+  <!-- 1. overflow: visible -->
+  <h2>1. overflow: visible (default)</h2>
+  <div class="box" style="overflow: visible;">
+    This is long text that will overflow outside the box without scrollbars.
+  </div>
+
+  <!-- 2. overflow: hidden -->
+  <h2>2. overflow: hidden</h2>
+  <div class="box" style="overflow: hidden;">
+    This is long text that will be clipped and hidden when overflowing.
+  </div>
+
+  <!-- 3. overflow: scroll -->
+  <h2>3. overflow: scroll</h2>
+  <div class="box" style="overflow: scroll;">
+    This is long text that will show scrollbars even if not needed.
+  </div>
+
+  <!-- 4. overflow: auto -->
+  <h2>4. overflow: auto</h2>
+  <div class="box" style="overflow: auto;">
+    This is long text that will only show scrollbars when needed.
+  </div>
+
+  <!-- 5. overflow-x: scroll -->
+  <h2>5. overflow-x: scroll</h2>
+  <div class="box" style="overflow-x: scroll; overflow-y: hidden;">
+    This_is_a_really_really_long_line_without_spaces_that_scrolls_horizontally_only.
+  </div>
+
+  <!-- 6. overflow-y: scroll -->
+  <h2>6. overflow-y: scroll</h2>
+  <div class="box" style="overflow-y: scroll; overflow-x: hidden;">
+    Line 1<br>
+    Line 2<br>
+    Line 3<br>
+    Line 4<br>
+  </div>
+
+  <!-- 7. overflow: clip -->
+  <h2>7. overflow: clip</h2>
+  <div class="box" style="overflow: clip;">
+    This content will be clipped with no scrollbars.
+  </div>
+
+  <!-- 8. overflow: overlay (deprecated) -->
+  <h2>8. overflow: overlay (not supported in most browsers)</h2>
+  <div class="box" style="overflow: overlay;">
+    Scrollbars appear on top of content (in some browsers).
+  </div>
+
+</body>
+</html>

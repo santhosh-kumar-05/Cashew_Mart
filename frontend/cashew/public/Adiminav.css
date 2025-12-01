@@ -1,0 +1,58 @@
+/* Base admin link */
+.admin-link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555 !important;
+  padding: 6px 10px;
+  border-radius: 6px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease-in-out;
+}
+
+/* Soft hover background */
+.admin-link:hover {
+  background: rgba(0, 123, 255, 0.08);
+  color: #0d6efd !important;
+}
+
+/* Underline animation */
+.admin-link::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, #2d8505, #52ff02);
+  transition: width 0.3s ease;
+  border-radius: 20px;
+}
+
+.admin-link:hover::after {
+  width: 80%;
+}
+
+/* Icon hover animation */
+.admin-link svg {
+  transition: transform 0.25s ease;
+}
+
+.admin-link:hover svg {
+  transform: translateY(-2px);
+}
+
+/* Logout Button */
+.logout-btn {
+  font-size: 0.85rem;
+  padding: 6px 16px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.logout-btn:hover {
+  transform: scale(1.06);
+  background-color: #c82333;
+}

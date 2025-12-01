@@ -1,0 +1,283 @@
+/* --- Layout Wrapper --- */
+.confirmOrderPage {
+  width: 92%;
+  margin: 10px auto;
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  animation: fadeIn 0.5s ease-in-out;
+  position: relative;
+  top: 100px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Card Shared Style --- */
+.shippingBox,
+.cartItemsBox,
+.summaryBox {
+  background: rgba(255,255,255,0.9);
+  padding: 25px;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transition: all 0.3s ease-in-out;
+}
+
+.shippingBox:hover,
+.cartItemsBox:hover,
+.summaryBox:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+/* --- Titles --- */
+.shippingBox h3,
+.cartItemsBox h3,
+.summaryBox h3 {
+  font-size: 23px;
+  margin-bottom: 18px;
+  font-weight: 700;
+  color: #1b1b1b;
+  letter-spacing: 0.5px;
+  border-left: 5px solid #ff7a30;
+  padding-left: 10px;
+}
+
+/* --- Shipping Detail Text --- */
+.shippingDetail p {
+  font-size: 16px;
+  margin: 6px 0;
+  color: #333;
+}
+
+/* --- Cart Section --- */
+.cartAndSummary {
+  flex: 2;
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.cartItemsBox {
+  flex: 2;
+  min-width: 380px;
+}
+
+/* --- Cart Item Card --- */
+.cartItemCard {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e8e8e8;
+  transition: all 0.3s ease-in-out;
+}
+
+.cartItemCard:hover {
+  transform: translateX(6px);
+}
+
+.cartItemCard img {
+  width: 75px;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #ff7a30;
+}
+
+.cartItemCard p {
+  font-size: 17px;
+  font-weight: 600;
+  width: 170px;
+}
+
+/* --- Summary Card --- */
+.summaryBox {
+  flex: 1;
+  min-width: 300px;
+}
+
+.summaryDetails div {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-size: 17px;
+}
+
+.summaryTotal {
+  border-top: 1px solid #ccc;
+  margin-top: 18px;
+  padding-top: 12px;
+  font-size: 18px;
+}
+
+/* --- Payment Button --- */
+.paymentBtn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  font-size: 19px;
+  background: linear-gradient(90deg, #ff7a30, #ff5711);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.paymentBtn:hover {
+  background: linear-gradient(90deg, #ff5711, #d63e00);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 122, 48, 0.4);
+}
+
+.paymentBtn:active {
+  transform: scale(0.97);
+}
+.backBtn {
+  width: 100%;
+  padding: 12px;
+  font-size: 17px;
+  margin-bottom: 10px;
+  background: #ffffff;
+  border: 2px solid #ff7a30;
+  color: #ff7a30;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.backBtn:hover {
+  background: #ff7a30;
+  color: #ffffff;
+  transform: translateY(-3px);
+}
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qtyBtn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: #ff7a30;
+  color: white;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.qtyNumber {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Optional: limit Razorpay iframe size */
+.razorpay-container {
+
+  height: 500px !important;
+  margin-top: 50px !important;
+}
+/* -------- PERFECT MOBILE FONT & SPACING OPTIMIZATION -------- */
+@media (max-width: 480px) {
+
+  html, body {
+    font-size: 15px;
+  }
+
+  .confirmOrderPage {
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    padding: 14px;
+    gap: 20px;
+    top: 80px;
+  }
+
+  /* Card Blocks */
+  .shippingBox,
+  .cartItemsBox,
+  .summaryBox {
+    width: 100%;
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  /* Titles */
+  .shippingBox h3,
+  .cartItemsBox h3,
+  .summaryBox h3 {
+    font-size: 19px;
+    margin-bottom: 14px;
+  }
+
+  /* Shipping text */
+  .shippingDetail p {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  /* Cart section */
+  .cartItemCard {
+    gap: 12px;
+    padding: 12px 0;
+  }
+
+  .cartItemCard img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .cartItemCard p {
+    font-size: 15.5px;
+    font-weight: 600;
+    width: 130px;
+  }
+
+  /* Quantity */
+  .quantityControl {
+    gap: 6px;
+  }
+
+  .qtyBtn {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .qtyNumber {
+    font-size: 17px;
+  }
+
+  /* Summary numbers */
+  .summaryDetails div {
+    font-size: 16px;
+  }
+
+  .summaryTotal {
+    font-size: 17.5px;
+    font-weight: 700;
+  }
+
+  /* BUTTONS */
+  .paymentBtn,
+  .backBtn {
+    font-size: 17px;
+    padding: 14px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Razorpay frame */
+  .razorpay-container {
+    height: 400px !important;
+  }
+}

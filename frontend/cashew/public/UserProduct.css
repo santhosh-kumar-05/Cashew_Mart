@@ -1,0 +1,384 @@
+.full-page {
+  background: #fafafa;
+  padding-bottom: 80px;
+}
+
+/* ---------------- WELCOME SECTION ------------- */
+.welcome-section {
+  /* margin-top: 100px; */
+  position: relative;
+  top:100px;
+  padding: 60px 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.welcome-left {
+  width: 50%;
+}
+
+.welcome-title {
+  font-size: 48px;
+  font-weight: 800;
+  color: #2c2c2c;
+  margin-bottom: 15px;
+}
+
+.welcome-sub {
+  font-size: 22px;
+  color: #ff7a30;
+  margin-bottom: 20px;
+}
+
+.welcome-desc {
+  color: #444;
+  font-size: 18px;
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
+
+.explore-btn {
+  background: #ff7a30;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 8px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.explore-btn:hover {
+  background: #ff5c00;
+}
+
+.welcome-right {
+  width: 45%;
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------------- ABOUT SECTION ------------- */
+.about-section {
+  margin-top: 100px;
+  padding: 60px 100px;
+}
+
+.about-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.about-desc-main {
+  text-align: center;
+  color: #555;
+  font-size: 18px;
+  max-width: 800px;
+  margin: auto;
+  margin-bottom: 40px;
+}
+
+.about-grid {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.about-card {
+  width: 45%;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: 0.3s ease;
+}
+
+.about-card:hover {
+  transform: translateY(-5px);
+}
+
+.about-card h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.about-card p {
+  color: #555;
+  font-size: 16px;
+}
+
+/* ---------------- FOOTER ------------- */
+.footer-text {
+  text-align: center;
+  margin-top: 60px;
+  padding: 20px 0;
+  color: #777;
+}
+/* ---------------- CONTACT SECTION ------------- */
+.contact-section {
+  padding: 60px 100px;
+  background: #fff7ef;
+  margin-top: 60px;
+}
+
+.contact-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #2c2c2c;
+}
+
+.contact-subtext {
+  text-align: center;
+  color: #555;
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+.contact-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.contact-info {
+  width: 45%;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.09);
+}
+
+.contact-info h3 {
+  margin-top: 15px;
+  font-size: 20px;
+  color: #ff7a30;
+}
+
+.contact-info p {
+  font-size: 16px;
+  margin: 5px 0;
+  color: #444;
+}
+
+.contact-form {
+  width: 45%;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.09);
+}
+
+.form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-box input,
+.form-box textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+.form-box input:focus,
+.form-box textarea:focus {
+  outline: none;
+  border-color: #ff7a30;
+}
+
+.send-btn {
+  background: #ff7a30;
+  color: white;
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: 0.3s ease;
+}
+
+.send-btn:hover {
+  background: #ff5c00;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .contact-container {
+    flex-direction: column;
+  }
+
+  .contact-info,
+  .contact-form {
+    width: 100%;
+  }
+}
+
+/* public/UserProduct.css - Professional product grid */
+/* ---------------- MOBILE OPTIMIZATION ---------------- */
+@media (max-width: 768px) {
+  /* Welcome Section adjustments */
+  .welcome-section {
+    flex-direction: column;
+    padding: 40px 20px;
+    top: 80px;
+    text-align: left; /* Align text to start for mobile */
+  }
+
+  .welcome-left {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .welcome-title {
+    font-size: 28px;
+    line-height: 1.2;
+    text-align: left; /* Heading start align */
+  }
+
+  .welcome-sub {
+    font-size: 16px;
+    text-align: left;
+  }
+
+  .welcome-desc {
+    font-size: 15px;
+    text-align: left;
+  }
+
+  .explore-btn {
+    padding: 10px 25px;
+    font-size: 16px;
+  }
+
+  /* BounceCards professional adjustments */
+  .welcome-right {
+    width: 100%;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Optional: limit card size on mobile */
+  .bounce-card-container {
+    width: 100% !important;
+    max-width: 150px;
+    height: auto !important;
+  }
+
+  .bounce-card-container img {
+    width: 50%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+  .card{
+    width: 140px !important;
+  }
+
+  /* About Section */
+  .about-section {
+    padding: 40px 20px;
+    margin-top: 0px;
+  }
+
+  .about-title {
+    font-size: 26px;
+    text-align: left;
+  }
+
+  .about-desc-main {
+    font-size: 15px;
+    max-width: 100%;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+
+  .about-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .about-card {
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  .about-card h3 {
+    font-size: 18px;
+  }
+
+  .about-card p {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  /* Contact Section */
+  .contact-section {
+    padding: 40px 20px;
+  }
+
+  .contact-title {
+    font-size: 26px;
+    text-align: left;
+  }
+
+  .contact-subtext {
+    font-size: 15px;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+
+  .contact-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .contact-info,
+  .contact-form {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .contact-info h3 {
+    font-size: 18px;
+  }
+
+  .contact-info p {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .form-box input,
+  .form-box textarea {
+    padding: 10px;
+    font-size: 15px;
+  }
+
+  .send-btn {
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .footer-text {
+    font-size: 14px;
+    padding: 15px 0;
+  }
+  .bounceCardsContainer {
+    display: none !important;
+  }
+  .about-desc-main{
+    text-align: left;
+  }
+}
+

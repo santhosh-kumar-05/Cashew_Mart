@@ -1,0 +1,83 @@
+/* Reset */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  /* overflow-x: hidden; */
+}
+
+/* Page Layout */
+.homepage-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* HERO SECTION — FIXED */
+.home {
+  flex-grow: 1;
+  position: relative;
+  min-height: 100vh;       /* ⭐ IMPORTANT: takes full screen */
+  padding-bottom: 220px;   /* ⭐ IMPORTANT: space so footer stays below */
+}
+
+/* Background */
+.home::before {
+  content: "";
+  position: absolute;       /* <-- FIXED changed to ABSOLUTE */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../src/images/cashew.png") no-repeat center center / cover;
+  filter: brightness(80%);
+  z-index: -1;
+}
+/* NAVBAR DEFAULT */
+.navv {
+  transition: all 0.3s ease;
+  padding: 20px 0;
+}
+
+/* NAVBAR WHEN SCROLLED */
+.navv.scrolled {
+  background: rgba(0, 0, 0, 0.75);     /* Dark background */
+  backdrop-filter: blur(8px);          /* Glass effect */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  padding: 10px 0;                     /* Shrink navbar */
+}
+/* Make Navbar Fixed */
+.navv {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5); /* semi-transparent */
+  backdrop-filter: blur(10px); /* blur effect */
+  padding: 15px 0;
+}
+
+/* Push Hero Content Down */
+.home {
+  padding-top: 120px; /* height of navbar */
+}
+
+
+/* Hero Content */
+.hero-content {
+  position: absolute;
+  top: 150px;
+  left: 50px;
+  max-width: 600px;
+  text-align: left;
+  padding: 20px;
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}

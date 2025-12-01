@@ -1,0 +1,6 @@
+@media (max-width: 768px) {
+    .cardd {
+        width: 310px !important;
+        margin-left: 10px !important;
+    }
+}

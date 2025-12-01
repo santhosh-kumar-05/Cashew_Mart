@@ -1,0 +1,75 @@
+.payment-success-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 150px;
+  font-family: "Poppins", sans-serif;
+}
+
+.payment-card {
+  background: #ffffff;
+  width: 480px;
+  padding: 40px 30px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.success-icon {
+  font-size: 60px;
+  background: #4caf50;
+  color: white;
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.payment-card h2 {
+  font-size: 28px;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.thanks-text {
+  color: #555;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.ref-id {
+  font-size: 16px;
+  padding: 10px;
+  background: #f6f6f6;
+  border-radius: 10px;
+  margin-top: 5px;
+  margin-bottom: 25px;
+}
+
+.back-btn {
+  padding: 14px 22px;
+  border: none;
+  background: #ff7a30;
+  color: white;
+  font-size: 17px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 70%;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background: #e7661a;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}

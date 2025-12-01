@@ -1,0 +1,215 @@
+.add-product-page {
+  min-height: 100vh;
+  background: linear-gradient(to right, #f0f4f8, #f8f9fa);
+  display: flex;
+  flex-direction: column;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  /* margin-left: 100px; */
+  /* position: relative; */
+  /* bottom: 100px; */
+  /* left: 100px; */
+  /* margin-bottom: 20px; */
+}
+
+/* Page header */
+.page-header {
+  text-align: center;
+  padding: 10px;
+}
+
+.page-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #465C88, #FF7A30);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================
+   PRODUCT CARD (FULL SCREEN HEIGHT)
+========================== */
+.product-card.full-card {
+  max-width: 800px;
+  width: 90%;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  padding: 30px 40px;
+  position: relative;
+  left: 150px;
+  
+  /* Make card full screen height minus header */
+  height:900px !important; /* adjust 120px according to your navbar + page-header */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* spreads form and button */
+  /* overflow: hidden;  */
+}
+
+/* Form inside card scrollable */
+.product-card.full-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* overflow-y: auto;  */
+  padding-right: 10px; /* for scrollbar space */
+}
+
+/* ==========================
+   FORM INPUTS
+========================== */
+.input-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin-top: 10px;
+}
+
+.input-field, .textarea {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 2px solid #e0e4e8;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.input-field:focus, .textarea:focus {
+  border-color: #FF7A30;
+  box-shadow: 0 0 10px rgba(255,122,48,0.3);
+}
+
+.textarea { resize: vertical; }
+
+/* Flex row for price & stock */
+.row-flex { display: flex; gap: 20px; margin-top: 10px; }
+.col-half { flex: 1; }
+
+/* Image preview */
+.image-preview {
+  margin-top: 10px;
+  text-align: center;
+}
+.image-preview img {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 12px;
+  border: 2px solid #FF7A30;
+}
+
+/* File input */
+input[type="file"] {
+  border: 2px dashed #FF7A30;
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+  color: #FF7A30;
+  font-weight: 500;
+}
+
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(90deg, #465C88, #FF7A30);
+  cursor: pointer;
+}
+.cart-success-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #28a745;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  animation: fadeInOut 2.5s ease forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .product-card.full-card {
+    width: 95%;
+    left: 0;
+    padding: 20px;
+    height: auto; 
+    margin-left: 15px !important;/* adjust height automatically for smaller screens */
+  }
+
+  .product-card.full-card form {
+    gap: 8px;
+    padding-right: 0;
+  }
+
+  .row-flex {
+    flex-direction: column;
+  }
+
+  .col-half {
+    flex: 1;
+  }
+
+  .image-preview img {
+    max-width: 150px;
+    max-height: 150px;
+  }
+
+  input[type="file"] {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .submit-btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  .page-header h2 {
+    font-size: 22px;
+  }
+}
+
+/* VERY SMALL SCREENS */
+@media (max-width: 480px) {
+  .product-card.full-card {
+    padding: 15px;
+    margin-left: 15px !important;
+  }
+
+  .image-preview img {
+    max-width: 120px;
+    max-height: 120px;
+  }
+
+  input[type="file"] {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .submit-btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .page-header h2 {
+    font-size: 20px;
+  }
+}
+

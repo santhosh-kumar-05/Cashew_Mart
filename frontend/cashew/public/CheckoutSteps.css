@@ -1,0 +1,78 @@
+.checkout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+  gap: 15px;
+  top: 100px;
+}
+
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 600;
+  color: #6c757d;
+  transition: 0.4s ease-in-out;
+}
+
+.step span {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 3px solid #bfbfbf;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 18px;
+  background: white;
+  transition: 0.4s ease;
+}
+
+.step p {
+  margin-top: 5px;
+  font-size: 15px;
+}
+
+/* Active State */
+.step.active {
+  color: #0066ff;
+}
+
+.step.active span {
+  border-color: #0066ff;
+  background: #0066ff;
+  color: white;
+  box-shadow: 0px 0px 10px rgba(0, 102, 255, 0.5);
+}
+
+/* Connector Line */
+.line {
+  width: 70px;
+  height: 3px;
+  background-color: #bfbfbf;
+  transition: 0.4s ease-in-out;
+}
+
+.step.active ~ .line {
+  background-color: #0066ff;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .checkout-container {
+    gap: 7px;
+    top:100px !important;
+  }
+  .step span {
+    width: 38px;
+    height: 38px;
+    font-size: 15px;
+  }
+  .line {
+    width: 45px;
+  }
+}
