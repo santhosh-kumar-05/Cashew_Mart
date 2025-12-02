@@ -49,7 +49,7 @@ const Cartt = () => {
                   onClick={() => navigate(`/productdeatils/${item.productId}`)}
                 >
                   <img
-                    src={item.image ? `http://localhost:5000${item.image}` : ""}
+                    src={`${item.image}`}
                     alt={item.name}
                     className="ap-card-img"
                   />
