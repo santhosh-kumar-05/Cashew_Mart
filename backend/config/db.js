@@ -15,3 +15,7 @@ const connectDB = async () => {
 
 module.exports = connectDB;
 // "C:\Program Files\MongoDB\Server\8.0\bin\mongod.exe" --dbpath="C:\data\db"
+
+// pTBSoNEXegJpagLd
+// santhoshspidey99_db_user
+// mongodb+srv://santhoshspidey99_db_user:<db_password>@cashew.scgs1af.mongodb.net/?appName=cashew
