@@ -52,6 +52,8 @@ const AdminDashboard = () => {
     try {
       const res = await API.get("/messages"); // 👈 must return customerCount
       setCustomerCount(res.data.messages);
+      console.log(res.data);
+      
     } catch (error) {
       console.error(error);
     }
@@ -106,7 +108,13 @@ const AdminDashboard = () => {
             <div className="stat-item gradient-green">
               <FontAwesomeIcon icon={faIndianRupeeSign} className="stat-icon" />
               <h5>Revenue</h5>
-              <h2>₹{orders.reduce((sum, order) => sum + (order?.totalPrice || 0), 0)}</h2>
+              <h2>
+                ₹
+                {orders.reduce(
+                  (sum, order) => sum + (order?.totalPrice || 0),
+                  0
+                )}
+              </h2>
             </div>
 
             <div className="stat-item gradient-orange">
@@ -118,10 +126,10 @@ const AdminDashboard = () => {
         );
 
       case "addproduct":
-        return <AddProduct />;
-
+        return <AddProduct refreshProducts={fetchProducts} setPage={setPage} />;
       case "updateproduct":
-        return <AdminUpdateProduct id={selectedId} />;
+        return <AdminUpdateProduct id={selectedId}refreshProducts={fetchProducts} setPage={setPage} />;
+
 
       case "orders":
         return <AdminOrders />;
@@ -140,24 +148,48 @@ const AdminDashboard = () => {
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <h2 className="logo">MyAdmin</h2>
         <ul className="side-menu">
-          <li onClick={() => handlePageChange("dashboard")}><FontAwesomeIcon icon={faBoxOpen} /> Dashboard</li>
-          <li onClick={() => handlePageChange("addproduct")}><FontAwesomeIcon icon={faPlus} /> Add Product</li>
-          <li onClick={() => handlePageChange("orders")}><FontAwesomeIcon icon={faClipboardList} /> Orders</li>
-          <li onClick={() => handlePageChange("customers")}><FontAwesomeIcon icon={faUsers} /> Customers</li>
+          <li onClick={() => handlePageChange("dashboard")}>
+            <FontAwesomeIcon icon={faBoxOpen} /> Dashboard
+          </li>
+          <li onClick={() => handlePageChange("addproduct")}>
+            <FontAwesomeIcon icon={faPlus} /> Add Product
+          </li>
+          <li onClick={() => handlePageChange("orders")}>
+            <FontAwesomeIcon icon={faClipboardList} /> Orders
+          </li>
+          <li onClick={() => handlePageChange("customers")}>
+            <FontAwesomeIcon icon={faUsers} /> Customers
+          </li>
         </ul>
       </aside>
 
-      {(sidebarOpen || profileOpen) && <div className="overlay" onClick={() => { setSidebarOpen(false); setProfileOpen(false); }}></div>}
+      {(sidebarOpen || profileOpen) && (
+        <div
+          className="overlay"
+          onClick={() => {
+            setSidebarOpen(false);
+            setProfileOpen(false);
+          }}
+        ></div>
+      )}
 
       <main className="main-content">
         <nav className="top-navbar">
           <div className="left-nav">
-            <FontAwesomeIcon className="menu-icon mobile-menu-btn" icon={faBars} onClick={() => setSidebarOpen(true)} />
+            <FontAwesomeIcon
+              className="menu-icon mobile-menu-btn"
+              icon={faBars}
+              onClick={() => setSidebarOpen(true)}
+            />
             <h3>{page.toUpperCase()}</h3>
           </div>
           <div className="right-nav">
             <FontAwesomeIcon className="nav-icon" icon={faBell} />
-            <FontAwesomeIcon className="nav-icon profile" icon={faUserCircle} onClick={() => setProfileOpen(true)} />
+            <FontAwesomeIcon
+              className="nav-icon profile"
+              icon={faUserCircle}
+              onClick={() => setProfileOpen(true)}
+            />
           </div>
         </nav>
 
@@ -167,7 +199,10 @@ const AdminDashboard = () => {
           <>
             <div className="product-header">
               <h3>Manage Products</h3>
-              <button className="add-product-btn" onClick={() => setPage("addproduct")}>
+              <button
+                className="add-product-btn"
+                onClick={() => setPage("addproduct")}
+              >
                 <FontAwesomeIcon icon={faPlus} /> Add Product
               </button>
             </div>
@@ -180,10 +215,19 @@ const AdminDashboard = () => {
                   <p className="product-price">₹{product.price}</p>
                   <p className="product-stock">Stock: {product.stock}</p>
                   <div className="product-actions">
-                    <button className="edit-btn" onClick={() => { setSelectedId(product._id); setPage("updateproduct"); }}>
+                    <button
+                      className="edit-btn"
+                      onClick={() => {
+                        setSelectedId(product._id);
+                        setPage("updateproduct");
+                      }}
+                    >
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
-                    <button className="delete-btn" onClick={() => handleDelete(product._id)}>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(product._id)}
+                    >
                       <FontAwesomeIcon icon={faTrash} />
                     </button>
                   </div>
@@ -201,8 +245,12 @@ const AdminDashboard = () => {
             <button onClick={() => setProfileOpen(false)}>X</button>
           </div>
           <div className="profile-content">
-            <p><FontAwesomeIcon icon={faUserCircle} /> Admin User</p>
-            <p onClick={handleLogout}><FontAwesomeIcon icon={faRightFromBracket} /> Logout</p>
+            <p>
+              <FontAwesomeIcon icon={faUserCircle} /> Admin User
+            </p>
+            <p onClick={handleLogout}>
+              <FontAwesomeIcon icon={faRightFromBracket} /> Logout
+            </p>
           </div>
         </div>
       )}

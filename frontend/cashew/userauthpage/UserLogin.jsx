@@ -1,12 +1,12 @@
-import React from "react";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import UserNav from "./UserNav";
-import API from "../src/axiosConfig"; // <-- centralized axios instance
+import API from "../src/axiosConfig";
 import "../public/UserLogin.css";
 
 // Validation schema
@@ -15,43 +15,50 @@ const schema = yup.object().shape({
   password: yup.string().required("Password is required"),
 });
 
+// Toast Component
+const ToastMessage = ({ message, type, onClose }) => (
+  <div className={`toast-msg ${type}`}>
+    {message}
+    <button onClick={onClose} style={{ marginLeft: "10px", background: "transparent", border: "none", color: "white", cursor: "pointer", fontSize: "18px" }}>&times;</button>
+  </div>
+);
+
 const UserLogin = () => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
+
+  const showToast = (message, type) => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "" }), 3000);
+  };
 
   const {
-    register: formRegister,
+    register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
-      const res = await API.post("/auth/login", data); // <-- relative path
+      console.log("Login data sent:", data); // Debug payload
+      const res = await API.post("/auth/login", data);
 
       if (res.data.status) {
         localStorage.setItem("userId", res.data.user._id);
-
-        Swal.fire({
-          title: "Login Successful 🎉",
-          text: `Welcome back!`,
-          icon: "success",
-        });
-
-        navigate("/");
+        showToast("Login Successful 🎉", "success");
+        setTimeout(() => navigate("/"), 2000);
         return;
       }
 
-      Swal.fire({
-        title: "Invalid Credentials ❌",
-        text: "Please check your email or password",
-        icon: "error",
-      });
+      showToast(res.data.message, "error");
     } catch (err) {
-      Swal.fire({
-        title: "Server Error",
-        text: err.response?.data?.message || err.message,
-        icon: "error",
-      });
+      console.log(err.response?.data); // Debug backend error
+      showToast(err.response?.data?.message || "Server Error", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,8 +66,11 @@ const UserLogin = () => {
     <section>
       <UserNav />
 
+      {/* Toast */}
+      {toast.show && <ToastMessage message={toast.message} type={toast.type} onClose={() => setToast({ show: false })} />}
+
       <Container className="login-wrapper">
-        <Card className="login-card shadow-lg" style={{ marginTop: "0px" }}>
+        <Card className="login-card shadow-lg">
           <Row className="g-0">
             {/* FORM SIDE */}
             <Col lg={6} className="login-form-side">
@@ -70,49 +80,60 @@ const UserLogin = () => {
 
               <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label className="form-labell">Email</Form.Label>
                   <Form.Control
                     type="email"
                     placeholder="Enter email"
-                    {...formRegister("email")}
+                    {...register("email")}
                   />
-                  {errors.email && (
-                    <p className="text-danger">{errors.email.message}</p>
-                  )}
+                  {errors.email && <p className="text-danger">{errors.email.message}</p>}
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Enter password"
-                    {...formRegister("password")}
-                  />
-                  {errors.password && (
-                    <p className="text-danger">{errors.password.message}</p>
-                  )}
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter password"
+                      {...register("password")}
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </Button>
+                  </InputGroup>
+                  {errors.password && <p className="text-danger">{errors.password.message}</p>}
                 </Form.Group>
 
-                <Button variant="dark" type="submit" className="w-100">
-                  Login
+                <Button variant="dark" type="submit" className="w-100" disabled={loading}>
+                  {loading ? "Logging in..." : "Login"}
                 </Button>
+
+                <div className="mobilelog">
+                  <p className="text-center mt-3" style={{ color: "white" }}>
+                    Don't have an account? <a href="/register">Register here</a>
+                  </p>
+                  <p className="text-center mt-3" style={{ color: "white" }}>
+                    <a href="/adminlogin">Admin here</a>
+                  </p>
+                </div>
               </Form>
             </Col>
 
             {/* RIGHT SIDE */}
             <Col lg={6} className="login-image-side d-none d-lg-flex">
               <h3 className="text-white">Welcome Back 👋</h3>
-
               <p className="text-center text-light mt-3">
-                Access your dashboard, manage your account, and shop the best
-                cashew products.
+                Access your dashboard, manage your account, and shop the best cashew products.
               </p>
-
               <p className="text-center mt-3" style={{ color: "white" }}>
                 Don't have an account? <a href="/register">Register here</a>
               </p>
               <p className="text-center mt-3" style={{ color: "white" }}>
-                 <a href="/adminlogin">Admin here</a>
+                <a href="/adminlogin">Admin here</a>
               </p>
             </Col>
           </Row>

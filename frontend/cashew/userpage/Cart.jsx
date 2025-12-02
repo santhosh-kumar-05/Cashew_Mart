@@ -25,7 +25,7 @@ const Cartt = () => {
   if (loading)
     return (
       <div>
-        <UserNav/>
+        <UserNav />
         <h2 style={{ textAlign: "center", marginTop: 40 }}>
           <div className="loading-wrap">
             <ThreeDot color="#32cd32" size="medium" text="Loading Product..." />
@@ -39,6 +39,8 @@ const Cartt = () => {
       <UserNav />
       {cartproduct.length > 0 ? (
         <div className="ap-container">
+          <h2 className="ap-heading">CART PAGE</h2>
+
           <div className="ap-grid">
             {cartproduct.map((item) => (
               <Card className="ap-card" key={item._id}>

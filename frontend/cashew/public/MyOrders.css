@@ -192,7 +192,7 @@
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   } */
   .product-card img {
-    height: 80px;
+    height: 90px;
   }
 }
 
@@ -207,7 +207,7 @@
     font-size: 11px;
   }
   .order-card{
-    width: 250px;
+    width: 300px;
     margin-left: 20px;
 
   }

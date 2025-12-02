@@ -1,11 +1,11 @@
-import React from "react";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import API from "../src/axiosConfig"; // ✅ use the base URL
+import API from "../src/axiosConfig"; 
 import "../public/AdminLogin.css";
 
 const schema = yup.object().shape({
@@ -16,10 +16,12 @@ const schema = yup.object().shape({
 const AdminLogin = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
+  
+  // ✅ State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     try {
-      // ✅ Use API instance instead of axios directly
       const res = await API.post("/admin/login", data);
 
       if (res.data.message === "Login Successful") {
@@ -50,7 +52,7 @@ const AdminLogin = () => {
 
   return (
     <Container>
-      <Row className="justify-content-center" style={{ height: "300px", marginTop: "100px" }}>
+      <Row className="justify-content-center mob" style={{ height: "300px", marginTop: "100px" }}>
         <Col xl={10}>
           <Card className="border-0 shadow adminlogin" style={{ width: "700px", height: "400px", marginLeft: "100px", marginBottom: "200px" }}>
             <Card.Body className="adimcard">
@@ -67,7 +69,21 @@ const AdminLogin = () => {
 
                       <Form.Group className="mb-2">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" {...register("password")} />
+                        {/* ✅ InputGroup for hide/show */}
+                        <InputGroup>
+                          <Form.Control 
+                            type={showPassword ? "text" : "password"} 
+                            placeholder="Password" 
+                            {...register("password")} 
+                          />
+                          <Button 
+                            variant="outline-secondary" 
+                            type="button" 
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? "Hide" : "Show"}
+                          </Button>
+                        </InputGroup>
                         {errors.password && <p className="text-danger">{errors.password.message}</p>}
                       </Form.Group>
 

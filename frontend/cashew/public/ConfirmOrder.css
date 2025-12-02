@@ -278,6 +278,7 @@
 
   /* Razorpay frame */
   .razorpay-container {
-    height: 400px !important;
+    height: 500px !important;
+    margin-top: 100px !important;
   }
 }

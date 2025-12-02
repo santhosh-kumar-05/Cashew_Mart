@@ -1,6 +1,61 @@
 @media (max-width: 768px) {
     .cardd {
         width: 310px !important;
-        margin-left: 10px !important;
+        margin-left: 30px !important;
     }
+}/* Toast Container */
+.toast-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 14px 22px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  z-index: 9999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 250px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+}
+
+/* Toast Types */
+.toast-msg.success {
+  background-color: #28a745; /* Green */
+}
+
+.toast-msg.error {
+  background-color: #dc3545; /* Red */
+}
+
+/* Close button */
+.toast-msg button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Slide in animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade out animation */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
 }

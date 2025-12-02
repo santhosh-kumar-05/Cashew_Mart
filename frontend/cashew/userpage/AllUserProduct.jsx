@@ -106,7 +106,7 @@ const AllUserProduct = () => {
       {toastMsg && <div className="cart-success-toast">{toastMsg}</div>}
 
       <div className="ap-container">
-        <h2 className="ap-heading">Our Products</h2>
+        <h2 className="ap-heading">OUR PRODUCTS</h2>
         {error && <div className="ap-error">{error}</div>}
 
         <div className="ap-grid">
@@ -121,7 +121,10 @@ const AllUserProduct = () => {
                 <div
                   className="ap-card-media"
                   onClick={() => navigate(`/productdetails/${id}`)}
+
                 >
+                {console.log(item.image)
+                }
                   <img src={item.image} alt={item.name} className="ap-card-img" />
                 </div>
 

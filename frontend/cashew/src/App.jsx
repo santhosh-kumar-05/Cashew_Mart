@@ -32,7 +32,6 @@ const App = () => {
   return (
     <Router>
       <Routes>
-
         {/* ADMIN LOGIN */}
         <Route
           path="/adminlogin"
@@ -47,28 +46,24 @@ const App = () => {
         <Route
           path="/userlogin"
           element={
-            
-              <RedirectAuthRoute>
-                <UserLogin />
-              </RedirectAuthRoute>
+            <RedirectAuthRoute>
+              <UserLogin />
+            </RedirectAuthRoute>
           }
         />
         <Route
           path="/register"
           element={
+            <UserLayout>
               <RedirectAuthRoute>
                 <Register />
               </RedirectAuthRoute>
+            </UserLayout>
           }
         />
 
         {/* PUBLIC USER PAGES WITH FOOTER */}
-        <Route
-          path="/"
-          element={
-              <Product />
-          }
-        />
+        <Route path="/" element={<Product />} />
         <Route
           path="/allproducts"
           element={
@@ -174,7 +169,6 @@ const App = () => {
 
         {/* NOT FOUND */}
         <Route path="/*" element={<NotFound />} />
-
       </Routes>
     </Router>
   );

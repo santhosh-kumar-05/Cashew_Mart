@@ -47,6 +47,7 @@ exports.registerUser = async (req, res) => {
 };
 
 // LOGIN USER (unchanged)
+// LOGIN USER
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -60,19 +61,21 @@ exports.loginUser = async (req, res) => {
 
     // Find user by email and include password
     const user = await User.findOne({ email }).select("+password");
+
+    // If user not found
     if (!user) {
       return res.status(400).json({
         status: false,
-        message: "Invalid email or password",
+        message: "No account registered with this email",
       });
     }
 
-    // Check password
+    // If password incorrect
     const isPasswordCorrect = await user.isValidPassword(password);
     if (!isPasswordCorrect) {
       return res.status(400).json({
         status: false,
-        message: "Invalid email or password",
+        message: "Invalid credentials",
       });
     }
 
@@ -89,7 +92,8 @@ exports.loginUser = async (req, res) => {
       message: err.message,
     });
   }
-};// GET USER PROFILE
+};
+
 exports.getUserProfile = async (req, res) => {
   try {
     const userId = req.params.id; // get ID from URL
@@ -102,4 +106,3 @@ exports.getUserProfile = async (req, res) => {
     res.status(500).json({ status: false, message: err.message });
   }
 };
-

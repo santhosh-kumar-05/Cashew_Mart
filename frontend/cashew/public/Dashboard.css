@@ -370,8 +370,10 @@
     font-size: 14px;
   }
   .adpro {
-    width: 200px !important;
+    width: 260px !important;
     margin-left: 50px !important;
+    height: 300px !important;
+    margin-top: 20px !important;
   }
   .product-header h3 {
     display: none;

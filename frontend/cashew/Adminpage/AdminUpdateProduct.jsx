@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../src/axiosConfig"; // ✅ Use central Axios instance
+import API from "../src/axiosConfig";
 import "../public/AddProduct.css";
 
-const AdminUpdateProduct = ({ id }) => {
+const AdminUpdateProduct = ({ id, refreshProducts, setPage }) => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState({
@@ -13,8 +13,18 @@ const AdminUpdateProduct = ({ id }) => {
     price: "",
     stock: "",
   });
+
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
+
+  // Toast component inside same page
+  const Toast = ({ message, type }) => (
+    <div className={`toast-container ${type}`}>
+      <span className="toast-icon">{type === "success" ? "✔" : "✖"}</span>
+      <span className="toast-message">{message}</span>
+    </div>
+  );
 
   // Fetch product details
   useEffect(() => {
@@ -31,67 +41,59 @@ const AdminUpdateProduct = ({ id }) => {
           stock: p.stock,
         });
 
-        // Show existing backend image
-        if (p.image) {
-          setPreview(`${p.image}`);
-        }
+        if (p.image) setPreview(p.image);
       } catch (err) {
-        console.error(err);
-        alert("Failed to load product");
+        setToast({
+          show: true,
+          message: "Failed to load product",
+          type: "error",
+        });
       }
     };
 
     fetchProduct();
   }, [id]);
 
-  // Handle input changes
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  // Handle image change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
     if (file) setPreview(URL.createObjectURL(file));
   };
 
-  // Update product
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("name", product.name);
-      formData.append("category", product.category);
-      formData.append("description", product.description);
-      formData.append("price", product.price);
-      formData.append("stock", product.stock);
-
+      Object.keys(product).forEach((key) => formData.append(key, product[key]));
       if (image) formData.append("image", image);
 
       await API.put(`/product/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Product updated successfully!");
-      setProduct({
-        name: "",
-        category: "",
-        description: "",
-        price: "",
-        stock: "",
+      setToast({
+        show: true,
+        message: "Product Updated Successfully!",
+        type: "success",
       });
-      setImage(null);
-      setPreview(null);
-      navigate("/admindashboard");
+
+      setTimeout(() => {
+        if (refreshProducts) refreshProducts();
+        setPage("dashboard"); // <- Now working
+      }, 1000);
     } catch (err) {
-      console.error(err);
-      alert("Failed to update product");
+      setToast({ show: true, message: "Update Failed!", type: "error" });
     }
   };
 
   return (
     <section className="add-product-page">
+      {toast.show && <Toast message={toast.message} type={toast.type} />}
+
       <div className="page-header">
         <h2>Update Product</h2>
       </div>

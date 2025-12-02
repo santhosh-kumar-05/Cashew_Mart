@@ -1,8 +1,22 @@
-import React, { useState } from "react";
-import API from "../src/axiosConfig"; // ✅ Use the Axios instance
+import React, { useState, useEffect } from "react";
+import API from "../src/axiosConfig";
 import "../public/AddProduct.css";
 
-const AddProduct = () => {
+const Toast = ({ message, type, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 2000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className={`toast-container ${type}`}>
+      <span className="toast-icon">✔</span>
+      <span className="toast-message">{message}</span>
+    </div>
+  );
+};
+
+const AddProduct = ({ refreshProducts, setPage }) => {
   const [product, setProduct] = useState({
     name: "",
     category: "",
@@ -10,8 +24,10 @@ const AddProduct = () => {
     price: "",
     stock: "",
   });
+
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [showToast, setShowToast] = useState(false);
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
@@ -27,41 +43,47 @@ const AddProduct = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("name", product.name);
-      formData.append("category", product.category);
-      formData.append("description", product.description);
-      formData.append("price", product.price);
-      formData.append("stock", product.stock);
+      Object.keys(product).forEach((key) => formData.append(key, product[key]));
       if (image) formData.append("image", image);
 
       await API.post("/product", formData, {
-        headers: { "Content-Type": "multipart/form-data" }, // ✅ Use API base URL
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Product Added Successfully!");
-      setProduct({
-        name: "",
-        category: "",
-        description: "",
-        price: "",
-        stock: "",
-      });
+      setShowToast(true);
+
+      setProduct({ name: "", category: "", description: "", price: "", stock: "" });
       setImage(null);
       setPreview(null);
+
+      setTimeout(() => {
+        refreshProducts();
+        setPage("dashboard");
+      }, 800);
+
     } catch (err) {
       console.error(err);
-      alert("Failed to Add Product!");
     }
   };
 
   return (
     <section className="add-product-page">
+      
+      {showToast && (
+        <Toast
+          message="Product Added Successfully!"
+          type="success"
+          onClose={() => setShowToast(false)}
+        />
+      )}
+
       <div className="page-header">
         <h2>Add New Product</h2>
       </div>
 
       <div className="product-card full-card" style={{ height: "490px" }}>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
+          
           <label className="input-label">Product Name</label>
           <input
             type="text"
