@@ -3,11 +3,11 @@ import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import "../public/UserLogin.css"; // <-- ADD THIS
 import UserNav from "./UserNav";
+import API from "../src/axiosConfig"; // <-- centralized axios instance
+import "../public/UserLogin.css";
 
 // Validation schema
 const schema = yup.object().shape({
@@ -25,15 +25,10 @@ const UserLogin = () => {
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = async (data) => {
-    console.log(data);
-
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", data);
-      console.log(res);
+      const res = await API.post("/auth/login", data); // <-- relative path
 
       if (res.data.status) {
-        console.log(res.data.user._id);
-
         localStorage.setItem("userId", res.data.user._id);
 
         Swal.fire({
@@ -52,8 +47,6 @@ const UserLogin = () => {
         icon: "error",
       });
     } catch (err) {
-      console.log(err);
-
       Swal.fire({
         title: "Server Error",
         text: err.response?.data?.message || err.message,
@@ -72,8 +65,7 @@ const UserLogin = () => {
             {/* FORM SIDE */}
             <Col lg={6} className="login-form-side">
               <div className="text-center mb-4">
-                {/* <img src="./src/wb1.jpg" alt="Logo" className="login-logo" /> */}
-                <h3 className="fw-bold mt-3 text-primary"> User Login </h3>
+                <h3 className="fw-bold mt-3 text-primary">User Login</h3>
               </div>
 
               <Form onSubmit={handleSubmit(onSubmit)}>
@@ -118,6 +110,9 @@ const UserLogin = () => {
 
               <p className="text-center mt-3" style={{ color: "white" }}>
                 Don't have an account? <a href="/register">Register here</a>
+              </p>
+              <p className="text-center mt-3" style={{ color: "white" }}>
+                 <a href="/adminlogin">Admin here</a>
               </p>
             </Col>
           </Row>

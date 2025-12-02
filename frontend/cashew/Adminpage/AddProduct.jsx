@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../src/axiosConfig"; // ✅ Use the Axios instance
 import "../public/AddProduct.css";
 
 const AddProduct = () => {
@@ -34,8 +34,8 @@ const AddProduct = () => {
       formData.append("stock", product.stock);
       if (image) formData.append("image", image);
 
-      await axios.post("http://localhost:5000/product", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      await API.post("/product", formData, {
+        headers: { "Content-Type": "multipart/form-data" }, // ✅ Use API base URL
       });
 
       alert("Product Added Successfully!");
@@ -56,7 +56,6 @@ const AddProduct = () => {
 
   return (
     <section className="add-product-page">
-
       <div className="page-header">
         <h2>Add New Product</h2>
       </div>

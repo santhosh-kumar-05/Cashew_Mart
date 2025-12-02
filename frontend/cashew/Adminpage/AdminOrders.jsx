@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../src/axiosConfig";  // ⬅ use central axios instance
 import "../public/AdminOrders.css";
 
 const AdminOrders = () => {
@@ -10,7 +10,7 @@ const AdminOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/all");
+        const res = await API.get("/all");  // ⬅ baseURL added automatically
         setOrders(res.data.orders);
       } catch (error) {
         console.error(error);
@@ -32,15 +32,10 @@ const AdminOrders = () => {
   return (
     <div className="admin-orders-wrapper">
       <div className="orders-header">
-        <div>
-          <h1 className="orders-title">Orders Dashboard</h1>
-          <p className="orders-subtitle">
-            Track and manage customer orders in real-time
-          </p>
-        </div>
+        <h1 className="orders-title">Orders Dashboard</h1>
+        <p className="orders-subtitle">Track and manage customer orders in real-time</p>
       </div>
 
-      {/* ================= TABLE =================  */}
       <div className="table-container">
         <table className="order-table">
           <thead>
@@ -57,10 +52,7 @@ const AdminOrders = () => {
           <tbody>
             {orders.length === 0 ? (
               <tr>
-                <td
-                  colSpan="6"
-                  style={{ textAlign: "center", padding: "25px" }}
-                >
+                <td colSpan="6" style={{ textAlign: "center", padding: "25px" }}>
                   No orders found
                 </td>
               </tr>
@@ -71,18 +63,13 @@ const AdminOrders = () => {
                   <td>{item._id}</td>
                   <td>₹{item.totalPrice}</td>
                   <td>
-                    <span
-                      className={`status-badge ${item.status.toLowerCase()}`}
-                    >
+                    <span className={`status-badge ${item.status.toLowerCase()}`}>
                       {item.status}
                     </span>
                   </td>
                   <td>{new Date(item.createdAt).toLocaleString()}</td>
                   <td>
-                    <button
-                      className="view-btn"
-                      onClick={() => openModal(item)}
-                    >
+                    <button className="view-btn" onClick={() => openModal(item)}>
                       View
                     </button>
                   </td>
@@ -93,68 +80,28 @@ const AdminOrders = () => {
         </table>
       </div>
 
-      {/* ================= MODAL / POPUP =================  */}
       {showModal && selectedOrder && (
         <div className="modal-overlay">
           <div className="order-modal">
             <h2 className="modal-title">Order Details</h2>
 
-            {/* SHIPPING */}
             <div className="section-box">
-              <h3>Shipping Information</h3>
-              <p>
-                <strong>Address:</strong> {selectedOrder.shippingInfo.address}
-              </p>
-              <p>
-                <strong>City:</strong> {selectedOrder.shippingInfo.city}
-              </p>
-              <p>
-                <strong>State:</strong> {selectedOrder.shippingInfo.state}
-              </p>
-              <p>
-                <strong>Country:</strong> {selectedOrder.shippingInfo.country}
-              </p>
-              <p>
-                <strong>Pincode:</strong>{" "}
-                {selectedOrder.shippingInfo.postalCode}
-              </p>
-              <p>
-                <strong>Phone:</strong> {selectedOrder.shippingInfo.phone}
-              </p>
+              <h3>Shipping Info</h3>
+              <p><strong>Address:</strong> {selectedOrder.shippingInfo.address}</p>
+              <p><strong>City:</strong> {selectedOrder.shippingInfo.city}</p>
+              <p><strong>State:</strong> {selectedOrder.shippingInfo.state}</p>
+              <p><strong>Country:</strong> {selectedOrder.shippingInfo.country}</p>
+              <p><strong>Pincode:</strong> {selectedOrder.shippingInfo.postalCode}</p>
+              <p><strong>Phone:</strong> {selectedOrder.shippingInfo.phone}</p>
             </div>
 
-            {/* PAYMENT */}
-            <div className="section-box">
-              <h3>Payment Details</h3>
-              <p>
-                <strong>Payment ID:</strong>{" "}
-                {selectedOrder.paymentInfo?.paymentId || "N/A"}
-              </p>
-              <p>
-                <strong>Order ID:</strong>{" "}
-                {selectedOrder.paymentInfo?.orderId || "N/A"}
-              </p>
-              <p>
-                <strong>Signature:</strong>{" "}
-                {selectedOrder.paymentInfo?.signature || "N/A"}
-              </p>
-            </div>
-
-            {/* CART ITEMS */}
             <div className="section-box">
               <h3>Items Ordered</h3>
               {selectedOrder.cartItems.map((i, idx) => (
                 <div className="item-row" key={idx}>
-                  {console.log(i.image)}
-                  <img
-                    src={`${i.image}`}
-                    alt=""
-                  />
-
+                  <img src={`${i.image}`} alt="" />
                   <div>
-                    <p>
-                      <strong>{i.name}</strong>
-                    </p>
+                    <p><strong>{i.name}</strong></p>
                     <p>Qty: {i.quantity}</p>
                     <p>Price: ₹{i.price}</p>
                   </div>
@@ -162,10 +109,7 @@ const AdminOrders = () => {
               ))}
             </div>
 
-            {/* ACTIONS */}
-            <button className="close-btn" onClick={closeModal}>
-              Close
-            </button>
+            <button className="close-btn" onClick={closeModal}>Close</button>
           </div>
         </div>
       )}

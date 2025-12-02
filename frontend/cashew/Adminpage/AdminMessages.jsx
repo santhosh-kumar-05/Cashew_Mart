@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../src/axiosConfig";   // <-- using central baseURL config
 import "../public/AdminMessages.css";
 import { FaEnvelopeOpenText, FaSearch } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -11,7 +11,7 @@ const AdminMessages = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/messages");
+      const res = await API.get("/messages");
       setMessages(res.data.messages);
     } catch (err) {
       console.error(err);
@@ -20,8 +20,9 @@ const AdminMessages = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this message?")) return;
+
     try {
-      await axios.delete(`http://localhost:5000/messages/${id}`);
+      await API.delete(`/messages/${id}`);
       fetchMessages();
     } catch (err) {
       console.error(err);
@@ -38,14 +39,14 @@ const AdminMessages = () => {
 
   return (
     <div className="msg-page">
-      {/* ----- HEADER ----- */}
+      {/* HEADER */}
       <header className="msg-header">
         <FaEnvelopeOpenText size={40} className="msg-icon" />
         <h1>Customer Messages</h1>
         <span className="msg-badge">{messages.length} Messages</span>
       </header>
 
-      {/* ----- SEARCH BAR ----- */}
+      {/* SEARCH */}
       <div className="msg-search">
         <FaSearch className="search-icon" />
         <input
@@ -55,7 +56,7 @@ const AdminMessages = () => {
         />
       </div>
 
-      {/* ----- MESSAGE GRID ----- */}
+      {/* MESSAGE CARDS */}
       <div className="msg-grid">
         {filteredMessages.map((msg) => (
           <div
@@ -72,11 +73,12 @@ const AdminMessages = () => {
             <p className="msg-preview">{msg.message}</p>
 
             <button
-              className="delete-btn"
+              className="delete-btnn"
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete(msg._id);
               }}
+              
             >
               <MdDelete size={18} /> Delete
             </button>
@@ -84,7 +86,7 @@ const AdminMessages = () => {
         ))}
       </div>
 
-      {/* ------- MODAL VIEW -------- */}
+      {/* MODAL */}
       {selectedMessage && (
         <div className="modal-container">
           <div className="modal-box">

@@ -10,6 +10,7 @@ import {
   faThLarge,
 } from "@fortawesome/free-solid-svg-icons";
 import "../public/UserNav.css";
+import API from "../src/axiosConfig";
 
 const UserNav = () => {
   const navigate = useNavigate();
@@ -20,10 +21,11 @@ const UserNav = () => {
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
-      fetch(`http://localhost:5000/api/auth/profile/${storedUserId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status) setUserData(data.user);
+      API.get(`/auth/profile/${storedUserId}`)
+        .then((res) => {
+          if (res.data?.status && res.data?.user) {
+            setUserData(res.data.user);
+          }
         })
         .catch((err) => console.error(err));
     }
@@ -46,31 +48,53 @@ const UserNav = () => {
       {/* DESKTOP NAVBAR */}
       <nav className="user-navbar">
         <div className="container d-flex justify-content-between align-items-center">
-          <Link className="brand" to="/">CashewMart</Link>
+          <Link className="brand" to="/">
+            CashewMart
+          </Link>
 
           <ul className="nav-menu d-none d-lg-flex gap-4 align-items-center">
-            <li><Link className="nav-link-custom" to="/">Home</Link></li>
-            <li><Link className="nav-link-custom" to="/allproducts">Products</Link></li>
             <li>
-              <Link className="nav-link-custom cart-link position-relative" to="/cart">
-                <FontAwesomeIcon icon={faCartShopping} className="me-1" /> Cart
-                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+              <Link className="nav-link-custom" to="/">
+                Home
               </Link>
             </li>
-            <li><Link className="nav-link-custom" to="/myorder">
-              <FontAwesomeIcon icon={faBox} className="me-1" /> My Order
-            </Link></li>
+            <li>
+              <Link className="nav-link-custom" to="/allproducts">
+                Products
+              </Link>
+            </li>
+            <li>
+              <Link
+                className="nav-link-custom cart-link position-relative"
+                to="/cart"
+              >
+                <FontAwesomeIcon icon={faCartShopping} className="me-1" /> Cart
+                {cartCount > 0 && (
+                  <span className="cart-badge">{cartCount}</span>
+                )}
+              </Link>
+            </li>
+            <li>
+              <Link className="nav-link-custom" to="/myorder">
+                <FontAwesomeIcon icon={faBox} className="me-1" /> My Order
+              </Link>
+            </li>
 
             {userData ? (
               <li>
                 <button className="profile-btn" onClick={toggleProfile}>
-                  <FontAwesomeIcon icon={faUserCircle} className="me-1" /> Profile
+                  <FontAwesomeIcon icon={faUserCircle} className="me-1" />{" "}
+                  Profile
                 </button>
               </li>
             ) : (
               <li>
-                <button className="login-btn" onClick={() => navigate("/userlogin")}>
-                  <FontAwesomeIcon icon={faRightToBracket} className="me-1" /> Login
+                <button
+                  className="login-btn"
+                  onClick={() => navigate("/userlogin")}
+                >
+                  <FontAwesomeIcon icon={faRightToBracket} className="me-1" />{" "}
+                  Login
                 </button>
               </li>
             )}
@@ -90,10 +114,15 @@ const UserNav = () => {
           <span>Products</span>
         </button>
 
-        <button className="mobile-btn position-relative" onClick={() => navigate("/cart")}>
+        <button
+          className="mobile-btn position-relative"
+          onClick={() => navigate("/cart")}
+        >
           <FontAwesomeIcon icon={faCartShopping} />
           <span>Cart</span>
-          {cartCount > 0 && <small className="mobile-cart-count">{cartCount}</small>}
+          {cartCount > 0 && (
+            <small className="mobile-cart-count">{cartCount}</small>
+          )}
         </button>
 
         <button className="mobile-btn" onClick={() => navigate("/myorder")}>
@@ -111,7 +140,10 @@ const UserNav = () => {
         <div className="profile-dropdown-container">
           <div className="profile-card">
             <div className="profile-header">
-              <FontAwesomeIcon icon={faUserCircle} className="profile-big-icon" />
+              <FontAwesomeIcon
+                icon={faUserCircle}
+                className="profile-big-icon"
+              />
               <h4>{userData ? userData.name : "Guest User"}</h4>
               <p>{userData ? userData.email : "guest@example.com"}</p>
             </div>
@@ -119,13 +151,22 @@ const UserNav = () => {
             {/* <button className="profile-menu-item" onClick={() => navigate("/profile")}>
               👤 My Profile
             </button> */}
-            <button className="profile-menu-item" onClick={() => navigate("/myorder")}>
+            <button
+              className="profile-menu-item"
+              onClick={() => navigate("/myorder")}
+            >
               📦 My Orders
             </button>
-            <button className="profile-menu-item" onClick={() => navigate("/cart")}>
+            <button
+              className="profile-menu-item"
+              onClick={() => navigate("/cart")}
+            >
               🛒 My Cart
             </button>
-            <button className="profile-menu-item logout-btn" onClick={handleLogout}>
+            <button
+              className="profile-menu-item logout-btn"
+              onClick={handleLogout}
+            >
               🚪 Logout
             </button>
           </div>

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import "../public/AllProduct.css";
-import axios from "axios";
-import UserNav from "../userauthpage/UserNav";
 import { ThreeDot } from "react-loading-indicators";
 import { useNavigate } from "react-router-dom";
 
@@ -12,14 +10,11 @@ import { FaStar, FaRegStar } from "react-icons/fa";
 
 import { useDispatch } from "react-redux";
 import { addItem } from "../store/CartSlice";
+import api from "../src/axiosConfig";
+import UserNav from "../userauthpage/UserNav";
 
-/*
-  Props:
-  - userId: logged-in user's id
-  Example: <AllUserProduct userId={auth.user._id} />
-*/
-const AllUserProduct = (  ) => {
-  const [allproduct, setAllproduct] = useState([]);
+const AllUserProduct = () => {
+  const [allProducts, setAllProducts] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [toastMsg, setToastMsg] = useState("");
@@ -27,16 +22,18 @@ const AllUserProduct = (  ) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  let userId = localStorage.getItem('userId')
+  const userId = localStorage.getItem("userId");
 
+  // Fetch products
   useEffect(() => {
     let mounted = true;
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/product");
+        const res = await api.get("/product");
         if (!mounted) return;
+
         const products = res.data.products || res.data || [];
-        setAllproduct(products);
+        setAllProducts(products);
       } catch (err) {
         setError(err.message || "Failed to fetch products");
       } finally {
@@ -44,37 +41,40 @@ const AllUserProduct = (  ) => {
       }
     };
     fetchProducts();
+
     return () => (mounted = false);
   }, []);
 
- const addToCart = (product) => {
-  if (!userId) {
-    setToastMsg("You must be logged in to add to cart.");
-    setTimeout(() => setToastMsg(""), 2000);
-    return;
-  }
+  // Add to cart
+  const addToCart = (product) => {
+    if (!userId) {
+      setToastMsg("You must be logged in to add to cart.");
+      setTimeout(() => setToastMsg(""), 2000);
+      return;
+    }
 
-  dispatch(
-    addItem({
-      productId: product._id,
-      name: product.name,       // Required!
-      price: product.price,     // Required!
-      image: product.image || (product.images?.[0] ?? ""), // Required!
-      quantity: 1,
-    })
-  );
+    dispatch(
+      addItem({
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.image || "",
+        quantity: 1,
+      })
+    );
 
-  setToastMsg(`${product.name} added to cart ✓`);
-  setTimeout(() => setToastMsg(""), 2500);
-};
+    setToastMsg(`${product.name} added to cart ✓`);
+    setTimeout(() => setToastMsg(""), 2500);
+  };
 
-
+  // Toggle wishlist
   const toggleWishlist = (id) => {
     setWishlist((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
+  // Compute rating UI
   const computeRatingUi = (item) => {
     const r = item.rating ?? item.avgRating ?? 4.2;
     const full = Math.floor(r);
@@ -84,7 +84,8 @@ const AllUserProduct = (  ) => {
     return {
       stars,
       rating: r.toFixed(1),
-      reviews: item.numReviews || item.reviews || Math.floor(Math.random() * 200) + 10,
+      reviews:
+        item.numReviews || item.reviews || Math.floor(Math.random() * 200) + 10,
     };
   };
 
@@ -101,7 +102,7 @@ const AllUserProduct = (  ) => {
 
   return (
     <section className="allproduct">
-      <UserNav product />
+      <UserNav />
       {toastMsg && <div className="cart-success-toast">{toastMsg}</div>}
 
       <div className="ap-container">
@@ -109,24 +110,19 @@ const AllUserProduct = (  ) => {
         {error && <div className="ap-error">{error}</div>}
 
         <div className="ap-grid">
-          {allproduct.length === 0 && <div className="empty-msg">No products found</div>}
+          {allProducts.length === 0 && <div className="empty-msg">No products found</div>}
 
-          {allproduct.map((item) => {
+          {allProducts.map((item) => {
             const id = item._id || item.id;
-            const img = item.image
-              ? `http://localhost:5000${item.image}`
-              : item.images?.[0]
-              ? item.images[0].startsWith("http")
-                ? item.images[0]
-                : `http://localhost:5000${item.images[0]}`
-              : "";
-
             const { stars, rating, reviews } = computeRatingUi(item);
 
             return (
               <Card className="ap-card" key={id}>
-                <div className="ap-card-media" onClick={() => navigate(`/productdeatils/${id}`)}>
-                  <img src={img} alt={item.name} className="ap-card-img" />
+                <div
+                  className="ap-card-media"
+                  onClick={() => navigate(`/productdetails/${id}`)}
+                >
+                  <img src={item.image} alt={item.name} className="ap-card-img" />
                 </div>
 
                 <Card.Body className="ap-card-body">
@@ -136,9 +132,7 @@ const AllUserProduct = (  ) => {
 
                   <div className="ap-sub">
                     <div className="ap-price">₹{item.price}</div>
-                    <div className="ap-mrp">
-                      MRP ₹{item.mrp ?? Math.round(item.price * 1.12)}
-                    </div>
+                    <div className="ap-mrp">MRP ₹{item.mrp ?? Math.round(item.price * 1.12)}</div>
                   </div>
 
                   <div className="ap-rating-row">

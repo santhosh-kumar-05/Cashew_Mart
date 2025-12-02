@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import API from "../src/axiosConfig"; // centralized axios instance
 import UserNav from "../userauthpage/UserNav";
 import "../public/PaymentSuccess.css";
 
@@ -8,17 +8,17 @@ const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const reference = searchParams.get("reference");
   const navigate = useNavigate();
-  const sentRequest = useRef(false); // <-- prevents multiple requests
+  const sentRequest = useRef(false); // prevent multiple order creations
 
   useEffect(() => {
-    if (sentRequest.current) return; // <-- already sent
-    sentRequest.current = true;       // <-- mark as sent
+    if (sentRequest.current) return;
+    sentRequest.current = true;
 
+    // Prevent back navigation
     window.history.pushState(null, "", window.location.href);
-    window.onpopstate = () => {
-      navigate("/allproducts", { replace: true });
-    };
+    window.onpopstate = () => navigate("/allproducts", { replace: true });
 
+    // Retrieve order and payment info from localStorage
     const orderInfo = JSON.parse(localStorage.getItem("orderInfo"));
     const paymentInfo = JSON.parse(localStorage.getItem("paymentInfo"));
 
@@ -39,14 +39,13 @@ const PaymentSuccess = () => {
         status: "Paid",
       };
 
-      axios
-        .post("http://localhost:5000/create", payload)
+      API.post("/create", payload)
         .then((res) => {
-          console.log("Order stored once:", res.data);
+          console.log("Order stored successfully:", res.data);
           localStorage.removeItem("orderInfo");
           localStorage.removeItem("paymentInfo");
         })
-        .catch((err) => console.error("Error saving order:", err));
+        .catch((err) => console.error("Error saving order:", err.message));
     }
   }, [navigate]);
 
@@ -57,7 +56,7 @@ const PaymentSuccess = () => {
         <div className="success-icon">✓</div>
         <h2>Payment Successful 🎉</h2>
         <p className="ref-id">
-          <strong>Reference ID:</strong> {reference}
+          <strong>Reference ID:</strong> {reference || "N/A"}
         </p>
         <button
           className="back-btn"

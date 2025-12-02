@@ -1,18 +1,22 @@
 const product = require("../models/productmodel");
 const Apifeatures = require("../utils/apifeauture");
 
+// Helper to build full image URL
+const getFullImageUrl = (req, filename) => {
+  if (!filename) return null;
+  return `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+};
+
+// CREATE PRODUCT
 exports.CreateProduct = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
-
     const products = await product.create({
       name: req.body.name,
       category: req.body.category,
       description: req.body.description,
       price: req.body.price,
       stock: req.body.stock,
-      image: req.file ? `/uploads/${req.file.filename}` : null,
+      image: req.file ? getFullImageUrl(req, req.file.filename) : null,
     });
 
     res.status(201).json({
@@ -25,17 +29,22 @@ exports.CreateProduct = async (req, res) => {
   }
 };
 
-
-
+// GET ALL PRODUCTS
 exports.GetAllProduct = async (req, res, next) => {
   try {
     const api = new Apifeatures(product.find(), req.query).search().filter();
     const products = await api.query;
 
+    // Ensure all image paths are full URLs
+    const productsWithFullUrls = products.map((p) => ({
+      ...p._doc,
+      image: p.image?.startsWith("http") ? p.image : `${req.protocol}://${req.get("host")}${p.image}`,
+    }));
+
     res.status(200).json({
       success: true,
-      count: products.length,
-      products, // full product data
+      count: productsWithFullUrls.length,
+      products: productsWithFullUrls,
     });
   } catch (error) {
     res.status(500).json({
@@ -44,21 +53,34 @@ exports.GetAllProduct = async (req, res, next) => {
     });
   }
 };
+
+// GET SINGLE PRODUCT
 exports.singleproduct = async (req, res, next) => {
   const { id } = req.params;
   const products = await product.findById(id);
+
   if (!products) {
-    res.status(404).json({
+    return res.status(404).json({
       success: false,
-      messsage: "product not found",
+      message: "Product not found",
     });
   }
+
+  // Ensure full URL
+  const productWithFullUrl = {
+    ...products._doc,
+    image: products.image?.startsWith("http")
+      ? products.image
+      : `${req.protocol}://${req.get("host")}${products.image}`,
+  };
+
   res.status(200).json({
     success: true,
-    products,
+    products: productWithFullUrl,
   });
 };
 
+// UPDATE PRODUCT
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -82,10 +104,9 @@ exports.updateProduct = async (req, res) => {
 
     // If new image uploaded
     if (req.file) {
-      updatedData.image = `/uploads/${req.file.filename}`;
+      updatedData.image = getFullImageUrl(req, req.file.filename);
     }
 
-    // Update the product
     const updatedProduct = await product.findByIdAndUpdate(
       id,
       { $set: updatedData },
@@ -105,11 +126,12 @@ exports.updateProduct = async (req, res) => {
     });
   }
 };
+
+// DELETE PRODUCT
 exports.dlelteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Find and delete in one step
     const deletedProduct = await product.findByIdAndDelete(id);
 
     if (!deletedProduct) {
@@ -131,6 +153,3 @@ exports.dlelteProduct = async (req, res) => {
     });
   }
 };
-
-
-

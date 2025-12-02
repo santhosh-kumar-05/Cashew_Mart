@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import API from "../src/axiosConfig"; // ✅ Use central Axios instance
 import "../public/AddProduct.css";
 
-const AdminUpdateProduct = ({id}) => {
-  console.log("mmmmmmmmmmmmm",id);
-  
+const AdminUpdateProduct = ({ id }) => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState({
@@ -15,17 +13,14 @@ const AdminUpdateProduct = ({id}) => {
     price: "",
     stock: "",
   });
-
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
+  // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/product/${id}`);
-        console.log(res.data.products);
-        
-
+        const res = await API.get(`/product/${id}`);
         const p = res.data.products;
 
         setProduct({
@@ -38,7 +33,7 @@ const AdminUpdateProduct = ({id}) => {
 
         // Show existing backend image
         if (p.image) {
-          setPreview(`http://localhost:5000${p.image}`);
+          setPreview(`${p.image}`);
         }
       } catch (err) {
         console.error(err);
@@ -49,44 +44,45 @@ const AdminUpdateProduct = ({id}) => {
     fetchProduct();
   }, [id]);
 
-  // Handle text inputs
+  // Handle input changes
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  // Handle new image upload
+  // Handle image change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
-
-    if (file) {
-      setPreview(URL.createObjectURL(file)); // new preview
-    }
+    if (file) setPreview(URL.createObjectURL(file));
   };
 
-  // Submit update
+  // Update product
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const formData = new FormData();
-
       formData.append("name", product.name);
       formData.append("category", product.category);
       formData.append("description", product.description);
       formData.append("price", product.price);
       formData.append("stock", product.stock);
 
-      // Only append new image if selected
-      if (image) {
-        formData.append("image", image);
-      }
+      if (image) formData.append("image", image);
 
-      await axios.put(`http://localhost:5000/product/${id}`, formData, {
+      await API.put(`/product/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       alert("Product updated successfully!");
+      setProduct({
+        name: "",
+        category: "",
+        description: "",
+        price: "",
+        stock: "",
+      });
+      setImage(null);
+      setPreview(null);
       navigate("/admindashboard");
     } catch (err) {
       console.error(err);
@@ -102,7 +98,6 @@ const AdminUpdateProduct = ({id}) => {
 
       <div className="product-card full-card">
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-
           <label className="input-label">Product Name</label>
           <input
             type="text"
@@ -165,7 +160,6 @@ const AdminUpdateProduct = ({id}) => {
             onChange={handleImageChange}
           />
 
-          {/* Image Preview */}
           {preview && (
             <div className="image-preview">
               <img src={preview} alt="preview" />

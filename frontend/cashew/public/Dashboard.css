@@ -188,6 +188,20 @@
 .delete-btn {
   background: #ef4444;
 }
+  .product-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+  .delete-btn {
+    width: 50px !important;
+    height: 50px !important;
+    margin-top: 4px !important;
+  }
+  .edit-btn {
+    width: 50px !important;
+    height: 50px !important;
+  }
 
 /* ---------- PROFILE OFFCANVAS FOR BOTH LAPTOP + MOBILE ---------- */
 .profile-offcanvas {

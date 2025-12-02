@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import "../public/UserProduct.css";
 import BounceCards from "./Cardswap";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import Swal from "sweetalert2";
 import UserNav from "../userauthpage/UserNav";
+import API from "../src/axiosConfig"; // centralized axios instance
 
 const Product = () => {
   const [form, setForm] = useState({
@@ -13,6 +13,8 @@ const Product = () => {
     message: "",
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -20,22 +22,22 @@ const Product = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/contact", form);
+      await API.post("/contact", form);
       Swal.fire("Sent!", "Your message has been sent successfully 😊", "success");
       setForm({ name: "", email: "", message: "" });
     } catch (error) {
-      console.log(error);
-      
+      console.error(error);
       Swal.fire("Error", "Message not sent", "error");
     }
   };
 
+  // Images should be imported or served from public folder
   const images = [
-    "../public/images/img1.png",
-    "../public/images/img2.png",
-    "../public/images/img3.png",
-    "../public/images/img4.png",
-    "../public/images/img5.png",
+    "/images/img1.png",
+    "/images/img2.png",
+    "/images/img3.png",
+    "/images/img4.png",
+    "/images/img5.png",
   ];
 
   const transformStyles = [
@@ -45,8 +47,6 @@ const Product = () => {
     "rotate(5deg) translate(70px)",
     "rotate(-5deg) translate(150px)",
   ];
-
-  let navigate = useNavigate();
 
   return (
     <div className="full-page">
@@ -58,8 +58,8 @@ const Product = () => {
           <h1 className="welcome-title">Welcome to Cashew Delights</h1>
           <p className="welcome-sub">Premium • Fresh • Authentic Cashews</p>
           <p className="welcome-desc">
-            Enjoy the finest handpicked cashews directly sourced from organic
-            farms. Our cashews are processed naturally, retaining their rich taste and freshness.
+            Enjoy the finest handpicked cashews directly sourced from organic farms. 
+            Our cashews are processed naturally, retaining their rich taste and freshness.
           </p>
 
           <button className="explore-btn" onClick={() => navigate("/allproducts")}>
@@ -115,7 +115,6 @@ const Product = () => {
       {/* ---------------------- CONTACT SECTION ----------------------- */}
       <section className="contact-section" id="contact">
         <h2 className="contact-title">Contact Us</h2>
-
         <p className="contact-subtext">
           Have questions or bulk orders? We’re here to help!
         </p>
@@ -123,12 +122,12 @@ const Product = () => {
         <div className="contact-container">
           <div className="contact-info">
             <h3>📍 Our Office</h3>
-            <p>Cashew Delights Pvt Ltd</p>
-            <p>Chennai, Tamil Nadu, India</p>
-            <p>Pin: 600001</p>
+            <p>Cashew Mart Pvt Ltd</p>
+            <p>Panruti, Tamil Nadu, India</p>
+            <p>Pin: 607106</p>
 
             <h3>📞 Phone</h3>
-            <p>+91 98765 43210</p>
+            <p>+91 9342506820</p>
 
             <h3>📧 Email</h3>
             <p>support@cashewdlights.com</p>
