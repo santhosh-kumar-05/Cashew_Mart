@@ -111,6 +111,8 @@ const AllUserProduct = () => {
 
         <div className="ap-grid">
           {allProducts.length === 0 && <div className="empty-msg">No products found</div>}
+          {console.log(allProducts)
+          }
 
           {allProducts.map((item) => {
             const id = item._id || item.id;
@@ -123,8 +125,6 @@ const AllUserProduct = () => {
                   onClick={() => navigate(`/productdetails/${id}`)}
 
                 >
-                {console.log(item.image)
-                }
                   <img src={item.image} alt={item.name} className="ap-card-img" />
                 </div>
 

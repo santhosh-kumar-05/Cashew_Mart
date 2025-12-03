@@ -1,28 +1,28 @@
 const express = require("express");
 const {
-  CreateProduct,
-  GetAllProduct,
-  singleproduct,
+  createProduct,
+  getAllProducts,
+  getSingleProduct,
   updateProduct,
-  dlelteProduct,
+  deleteProduct,
 } = require("../controllers/productcontroller");
 
 const router = express.Router();
 const upload = require("../middlewares/multer");
 
-// CREATE PRODUCT (with image)
-router.post("/product", upload.single("image"), CreateProduct);
+// CREATE PRODUCT
+router.post("/product", upload.single("image"), createProduct);
 
 // GET ALL PRODUCTS
-router.get("/product", GetAllProduct);
+router.get("/product", getAllProducts);
 
 // GET SINGLE PRODUCT
-router.get("/product/:id", singleproduct);
+router.get("/product/:id", getSingleProduct);
 
-// UPDATE PRODUCT (with optional image)
+// UPDATE PRODUCT
 router.put("/product/:id", upload.single("image"), updateProduct);
 
 // DELETE PRODUCT
-router.delete("/product/:id", dlelteProduct);
+router.delete("/product/:id", deleteProduct);
 
 module.exports = router;
