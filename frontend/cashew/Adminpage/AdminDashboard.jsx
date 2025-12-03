@@ -12,6 +12,7 @@ import {
   faUserCircle,
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import API from "../src/axiosConfig";
 import "../public/Dashboard.css";
@@ -21,14 +22,32 @@ import AdminUpdateProduct from "./AdminUpdateProduct";
 import AdminOrders from "./AdminOrders";
 import AdminMessages from "./AdminMessages";
 
+// Toast Component
+const Toast = ({ message, type, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 2000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className={`toast-container ${type}`}>
+      <span className="toast-icon">{type === "success" ? "✔" : "⚠"}</span>
+      <span className="toast-message">{message}</span>
+    </div>
+  );
+};
+
 const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [customerCount, setCustomerCount] = useState([]); // 👈 NEW
+  const [customerCount, setCustomerCount] = useState([]);
   const [page, setPage] = useState("dashboard");
   const [selectedId, setSelectedId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  // Toast state
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   const fetchProducts = async () => {
     try {
@@ -50,10 +69,8 @@ const AdminDashboard = () => {
 
   const fetchCustomers = async () => {
     try {
-      const res = await API.get("/messages"); // 👈 must return customerCount
+      const res = await API.get("/messages");
       setCustomerCount(res.data.messages);
-      console.log(res.data);
-      
     } catch (error) {
       console.error(error);
     }
@@ -62,19 +79,42 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchProducts();
     fetchOrders();
-    fetchCustomers(); // 👈 NEW
+    fetchCustomers();
   }, []);
 
+  // ================= DELETE PRODUCT WITH CONFIRMATION =================
   const handleDelete = async (id) => {
-    if (window.confirm("Delete this product?")) {
-      try {
-        await API.delete(`/product/${id}`);
-        setProducts(products.filter((p) => p._id !== id));
-      } catch (err) {
-        console.error(err);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to delete this product?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, Delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await API.delete(`/product/${id}`);
+          setProducts(products.filter((p) => p._id !== id));
+
+          setToast({
+            show: true,
+            message: "Product Deleted Successfully!",
+            type: "success",
+          });
+        } catch (err) {
+          console.error(err);
+          setToast({
+            show: true,
+            message: "Failed to Delete Product!",
+            type: "error",
+          });
+        }
       }
-    }
+    });
   };
+  // ==============================================================
 
   const handlePageChange = (value) => {
     setPage(value);
@@ -120,7 +160,7 @@ const AdminDashboard = () => {
             <div className="stat-item gradient-orange">
               <FontAwesomeIcon icon={faUsers} className="stat-icon" />
               <h5>Customers</h5>
-              <h2>{customerCount.length}</h2> {/* 👈 Display */}
+              <h2>{customerCount.length}</h2>
             </div>
           </div>
         );
@@ -128,15 +168,11 @@ const AdminDashboard = () => {
       case "addproduct":
         return <AddProduct refreshProducts={fetchProducts} setPage={setPage} />;
       case "updateproduct":
-        return <AdminUpdateProduct id={selectedId}refreshProducts={fetchProducts} setPage={setPage} />;
-
-
+        return <AdminUpdateProduct id={selectedId} refreshProducts={fetchProducts} setPage={setPage} />;
       case "orders":
         return <AdminOrders />;
-
       case "customers":
         return <AdminMessages />;
-
       default:
         return <h3>Dashboard</h3>;
     }
@@ -144,7 +180,14 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-container">
-      {/* SIDEBAR */}
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ show: false, message: "", type: "" })}
+        />
+      )}
+
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <h2 className="logo">MyAdmin</h2>
         <ul className="side-menu">
@@ -164,32 +207,18 @@ const AdminDashboard = () => {
       </aside>
 
       {(sidebarOpen || profileOpen) && (
-        <div
-          className="overlay"
-          onClick={() => {
-            setSidebarOpen(false);
-            setProfileOpen(false);
-          }}
-        ></div>
+        <div className="overlay" onClick={() => { setSidebarOpen(false); setProfileOpen(false); }} />
       )}
 
       <main className="main-content">
         <nav className="top-navbar">
           <div className="left-nav">
-            <FontAwesomeIcon
-              className="menu-icon mobile-menu-btn"
-              icon={faBars}
-              onClick={() => setSidebarOpen(true)}
-            />
+            <FontAwesomeIcon className="menu-icon mobile-menu-btn" icon={faBars} onClick={() => setSidebarOpen(true)} />
             <h3>{page.toUpperCase()}</h3>
           </div>
           <div className="right-nav">
             <FontAwesomeIcon className="nav-icon" icon={faBell} />
-            <FontAwesomeIcon
-              className="nav-icon profile"
-              icon={faUserCircle}
-              onClick={() => setProfileOpen(true)}
-            />
+            <FontAwesomeIcon className="nav-icon profile" icon={faUserCircle} onClick={() => setProfileOpen(true)} />
           </div>
         </nav>
 
@@ -199,10 +228,7 @@ const AdminDashboard = () => {
           <>
             <div className="product-header">
               <h3>Manage Products</h3>
-              <button
-                className="add-product-btn"
-                onClick={() => setPage("addproduct")}
-              >
+              <button className="add-product-btn" onClick={() => setPage("addproduct")}>
                 <FontAwesomeIcon icon={faPlus} /> Add Product
               </button>
             </div>
@@ -214,20 +240,13 @@ const AdminDashboard = () => {
                   <h5 className="product-title">{product.name}</h5>
                   <p className="product-price">₹{product.price}</p>
                   <p className="product-stock">Stock: {product.stock}</p>
+
                   <div className="product-actions">
-                    <button
-                      className="edit-btn"
-                      onClick={() => {
-                        setSelectedId(product._id);
-                        setPage("updateproduct");
-                      }}
-                    >
+                    <button className="edit-btn" onClick={() => { setSelectedId(product._id); setPage("updateproduct"); }}>
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(product._id)}
-                    >
+
+                    <button className="delete-btn" onClick={() => handleDelete(product._id)}>
                       <FontAwesomeIcon icon={faTrash} />
                     </button>
                   </div>
@@ -245,12 +264,8 @@ const AdminDashboard = () => {
             <button onClick={() => setProfileOpen(false)}>X</button>
           </div>
           <div className="profile-content">
-            <p>
-              <FontAwesomeIcon icon={faUserCircle} /> Admin User
-            </p>
-            <p onClick={handleLogout}>
-              <FontAwesomeIcon icon={faRightFromBracket} /> Logout
-            </p>
+            <p><FontAwesomeIcon icon={faUserCircle} /> Admin User</p>
+            <p onClick={handleLogout}><FontAwesomeIcon icon={faRightFromBracket} /> Logout</p>
           </div>
         </div>
       )}

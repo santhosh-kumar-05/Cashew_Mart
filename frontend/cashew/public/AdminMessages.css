@@ -184,3 +184,46 @@
     padding: 14px;
   }
 }
+/* Toast */
+.custom-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #ff7a30;
+  color: white;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-weight:600;
+  animation: fadeInOut 2.4s ease;
+  z-index: 9999;
+}
+
+@keyframes fadeInOut {
+  0% {opacity:0; transform: translateY(-10px);}
+  20% {opacity:1; transform: translateY(0);}
+  80% {opacity:1;}
+  100% {opacity:0; transform: translateY(-10px);}
+}
+
+/* Confirm Delete Popup */
+.confirm-box {
+  background: white;
+  padding: 25px;
+  width: 400px;
+  max-width: 92%;
+  border-radius: 12px;
+  text-align: center;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {transform: scale(0.9); opacity: 0;}
+  to {transform: scale(1); opacity: 1;}
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}

@@ -16,11 +16,12 @@ exports.CreateProduct = async (req, res) => {
       description: req.body.description,
       price: req.body.price,
       stock: req.body.stock,
-      image: req.file ? getFullImageUrl(req, req.file.filename) : null,
+      image: req.file ? req.file.filename : null, // store only filename
     });
 
     res.status(201).json({
       success: true,
+      message: "Product created successfully",
       products,
     });
   } catch (err) {
@@ -35,10 +36,9 @@ exports.GetAllProduct = async (req, res, next) => {
     const api = new Apifeatures(product.find(), req.query).search().filter();
     const products = await api.query;
 
-    // Ensure all image paths are full URLs
     const productsWithFullUrls = products.map((p) => ({
       ...p._doc,
-      image: p.image?.startsWith("http") ? p.image : `${req.protocol}://${req.get("host")}${p.image}`,
+      image: p.image ? getFullImageUrl(req, p.image) : null,
     }));
 
     res.status(200).json({
@@ -66,12 +66,9 @@ exports.singleproduct = async (req, res, next) => {
     });
   }
 
-  // Ensure full URL
   const productWithFullUrl = {
     ...products._doc,
-    image: products.image?.startsWith("http")
-      ? products.image
-      : `${req.protocol}://${req.get("host")}${products.image}`,
+    image: products.image ? getFullImageUrl(req, products.image) : null,
   };
 
   res.status(200).json({
@@ -93,7 +90,6 @@ exports.updateProduct = async (req, res) => {
       });
     }
 
-    // Collect updated fields
     let updatedData = {
       name: req.body.name,
       category: req.body.category,
@@ -102,9 +98,8 @@ exports.updateProduct = async (req, res) => {
       stock: req.body.stock,
     };
 
-    // If new image uploaded
     if (req.file) {
-      updatedData.image = getFullImageUrl(req, req.file.filename);
+      updatedData.image = req.file.filename;
     }
 
     const updatedProduct = await product.findByIdAndUpdate(
@@ -131,7 +126,6 @@ exports.updateProduct = async (req, res) => {
 exports.dlelteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-
     const deletedProduct = await product.findByIdAndDelete(id);
 
     if (!deletedProduct) {

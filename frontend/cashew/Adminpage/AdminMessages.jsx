@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API from "../src/axiosConfig";   // <-- using central baseURL config
+import API from "../src/axiosConfig";
 import "../public/AdminMessages.css";
 import { FaEnvelopeOpenText, FaSearch } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -7,7 +7,9 @@ import { MdDelete } from "react-icons/md";
 const AdminMessages = () => {
   const [messages, setMessages] = useState([]);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const [search, setSearch] = useState("");
+  const [toast, setToast] = useState("");
 
   const fetchMessages = async () => {
     try {
@@ -18,15 +20,21 @@ const AdminMessages = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this message?")) return;
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2500);
+  };
 
+  const handleDelete = async (id) => {
     try {
       await API.delete(`/messages/${id}`);
       fetchMessages();
+      showToast("Message deleted successfully!");
     } catch (err) {
       console.error(err);
+      showToast("Failed to delete message!");
     }
+    setConfirmDelete(null);
   };
 
   useEffect(() => {
@@ -39,14 +47,15 @@ const AdminMessages = () => {
 
   return (
     <div className="msg-page">
-      {/* HEADER */}
+      {/* Toast Notification */}
+      {toast && <div className="custom-toast">{toast}</div>}
+
       <header className="msg-header">
         <FaEnvelopeOpenText size={40} className="msg-icon" />
         <h1>Customer Messages</h1>
         <span className="msg-badge">{messages.length} Messages</span>
       </header>
 
-      {/* SEARCH */}
       <div className="msg-search">
         <FaSearch className="search-icon" />
         <input
@@ -56,29 +65,28 @@ const AdminMessages = () => {
         />
       </div>
 
-      {/* MESSAGE CARDS */}
       <div className="msg-grid">
         {filteredMessages.map((msg) => (
-          <div
-            key={msg._id}
-            className="msg-card"
-            onClick={() => setSelectedMessage(msg)}
-          >
-            <div className="msg-card-header">
-              <h3>{msg.name}</h3>
-              <small>{new Date(msg.createdAt).toLocaleDateString()}</small>
-            </div>
+          <div key={msg._id} className="msg-card">
+            <div
+              onClick={() => setSelectedMessage(msg)}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="msg-card-header">
+                <h3>{msg.name}</h3>
+                <small>{new Date(msg.createdAt).toLocaleDateString()}</small>
+              </div>
 
-            <p className="msg-email">{msg.email}</p>
-            <p className="msg-preview">{msg.message}</p>
+              <p className="msg-email">{msg.email}</p>
+              <p className="msg-preview">{msg.message.slice(0, 80)}...</p>
+            </div>
 
             <button
               className="delete-btnn"
               onClick={(e) => {
                 e.stopPropagation();
-                handleDelete(msg._id);
+                setConfirmDelete(msg);
               }}
-              
             >
               <MdDelete size={18} /> Delete
             </button>
@@ -86,7 +94,7 @@ const AdminMessages = () => {
         ))}
       </div>
 
-      {/* MODAL */}
+      {/* MESSAGE DETAILS MODAL */}
       {selectedMessage && (
         <div className="modal-container">
           <div className="modal-box">
@@ -99,15 +107,31 @@ const AdminMessages = () => {
             <div className="modal-msg">{selectedMessage.message}</div>
 
             <div className="modal-actions">
-              <button className="close-btn" onClick={() => setSelectedMessage(null)}>
+              <button
+                className="close-btn"
+                onClick={() => setSelectedMessage(null)}
+              >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE CONFIRM MODAL */}
+      {confirmDelete && (
+        <div className="modal-container">
+          <div className="confirm-box">
+            <h3>Are you sure?</h3>
+            <p>Do you really want to delete this message?</p>
+
+            <div className="modal-actions">
+              <button className="close-btn" onClick={() => setConfirmDelete(null)}>
+                Cancel
               </button>
               <button
                 className="delete-btn"
-                onClick={() => {
-                  handleDelete(selectedMessage._id);
-                  setSelectedMessage(null);
-                }}
+                onClick={() => handleDelete(confirmDelete._id)}
               >
                 <MdDelete size={18} /> Delete
               </button>

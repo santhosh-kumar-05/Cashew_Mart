@@ -55,6 +55,7 @@ const PaymentSuccess = () => {
       <div className="payment-card">
         <div className="success-icon">✓</div>
         <h2>Payment Successful 🎉</h2>
+        <h3 style={{color:"orangered"}}>Don't Worry,this is test mode.No money transactions will take place😜😂😉 </h3>
         <p className="ref-id">
           <strong>Reference ID:</strong> {reference || "N/A"}
         </p>
