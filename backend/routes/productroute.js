@@ -10,8 +10,8 @@ const {
 const router = express.Router();
 const upload = require("../middlewares/multer");
 
-// CREATE PRODUCT
-router.post("/product", upload.single("image"), createProduct);
+// CREATE PRODUCT - support multiple images
+router.post("/product", upload.array("images", 5), createProduct);
 
 // GET ALL PRODUCTS
 router.get("/product", getAllProducts);
@@ -19,8 +19,8 @@ router.get("/product", getAllProducts);
 // GET SINGLE PRODUCT
 router.get("/product/:id", getSingleProduct);
 
-// UPDATE PRODUCT
-router.put("/product/:id", upload.single("image"), updateProduct);
+// UPDATE PRODUCT - also support multiple images
+router.put("/product/:id", upload.array("images", 5), updateProduct);
 
 // DELETE PRODUCT
 router.delete("/product/:id", deleteProduct);

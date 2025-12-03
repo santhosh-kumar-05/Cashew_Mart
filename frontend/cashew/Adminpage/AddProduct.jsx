@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import API from "../src/axiosConfig";
 import "../public/AddProduct.css";
 
+// Toast component
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(onClose, 2000);
@@ -25,42 +26,53 @@ const AddProduct = ({ refreshProducts, setPage }) => {
     stock: "",
   });
 
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [images, setImages] = useState([]); // store File objects
+  const [previews, setPreviews] = useState([]); // store preview URLs
   const [showToast, setShowToast] = useState(false);
 
+  // Handle form field changes
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
+  // Handle multiple file selection
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setPreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    setImages(files);
+    setPreviews(files.map((file) => URL.createObjectURL(file)));
   };
 
+  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (images.length > 0) {
+        images.forEach((file) => formData.append("images", file));
+      }
+
       const formData = new FormData();
       Object.keys(product).forEach((key) => formData.append(key, product[key]));
-      if (image) formData.append("image", image);
+      images.forEach((file) => formData.append("images", file));
 
-      await API.post("/product", formData, {
+      await API.post("/api/product", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setShowToast(true);
-
-      setProduct({ name: "", category: "", description: "", price: "", stock: "" });
-      setImage(null);
-      setPreview(null);
+      setProduct({
+        name: "",
+        category: "",
+        description: "",
+        price: "",
+        stock: "",
+      });
+      setImages([]);
+      setPreviews([]);
 
       setTimeout(() => {
         refreshProducts();
         setPage("dashboard");
       }, 800);
-
     } catch (err) {
       console.error(err);
     }
@@ -68,7 +80,6 @@ const AddProduct = ({ refreshProducts, setPage }) => {
 
   return (
     <section className="add-product-page">
-      
       {showToast && (
         <Toast
           message="Product Added Successfully!"
@@ -81,9 +92,8 @@ const AddProduct = ({ refreshProducts, setPage }) => {
         <h2>Add New Product</h2>
       </div>
 
-      <div className="product-card full-card" style={{ height: "490px" }}>
+      <div className="product-card full-card" style={{ height: "550px" }}>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-          
           <label className="input-label">Product Name</label>
           <input
             type="text"
@@ -143,18 +153,25 @@ const AddProduct = ({ refreshProducts, setPage }) => {
             </div>
           </div>
 
-          <label className="input-label">Upload Product Image</label>
+          <label className="input-label">Upload Product Images</label>
           <input
             type="file"
-            className="input-field"
+            name="images" // must match backend
+            multiple
             accept="image/*"
             onChange={handleImageChange}
-            required
           />
 
-          {preview && (
-            <div className="image-preview">
-              <img src={preview} alt="preview" />
+          {previews.length > 0 && (
+            <div className="image-preview-container">
+              {previews.map((src, idx) => (
+                <img
+                  key={idx}
+                  src={src}
+                  alt={`preview ${idx}`}
+                  className="image-preview"
+                />
+              ))}
             </div>
           )}
 

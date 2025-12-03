@@ -6,13 +6,14 @@ const cloudinary = require("../config/cloudinary");
 // CREATE PRODUCT
 // =========================
 exports.createProduct = async (req, res) => {
+  console.log("=== CREATE PRODUCT ===");
+  console.log("req.body:", req.body);
+  console.log("req.files:", req.files);
+
   try {
-    // Support multiple images or single image
     let images = [];
     if (req.files && req.files.length > 0) {
       images = req.files.map((file) => file.path);
-    } else if (req.file) {
-      images = [req.file.path];
     }
 
     const newProduct = await Product.create({
@@ -21,14 +22,10 @@ exports.createProduct = async (req, res) => {
       description: req.body.description,
       price: req.body.price,
       stock: req.body.stock,
-      images: images, // array of Cloudinary URLs
+      images,
     });
 
-    res.status(201).json({
-      success: true,
-      message: "Product created successfully",
-      product: newProduct,
-    });
+    res.status(201).json({ success: true, product: newProduct });
   } catch (err) {
     console.error("ERROR IN PRODUCT CREATE:", err);
     res.status(500).json({ success: false, message: err.message });
@@ -61,7 +58,9 @@ exports.getSingleProduct = async (req, res) => {
   try {
     const productData = await Product.findById(id);
     if (!productData) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
     }
 
     res.status(200).json({ success: true, product: productData });
@@ -78,7 +77,9 @@ exports.updateProduct = async (req, res) => {
   try {
     const productToUpdate = await Product.findById(id);
     if (!productToUpdate) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
     }
 
     const updatedData = {
@@ -133,7 +134,9 @@ exports.deleteProduct = async (req, res) => {
     const deletedProduct = await Product.findByIdAndDelete(id);
 
     if (!deletedProduct) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
     }
 
     // Delete images from Cloudinary
@@ -145,9 +148,13 @@ exports.deleteProduct = async (req, res) => {
       }
     }
 
-    res.status(200).json({ success: true, message: "Product deleted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Product deleted successfully" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Failed to delete product" });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to delete product" });
   }
 };
