@@ -4,7 +4,7 @@ import UserNav from "../userauthpage/UserNav";
 import { useNavigate, useParams } from "react-router-dom";
 import "../public/ConfirmOrder.css";
 import { useSelector } from "react-redux";
-import API from "../src/axiosConfig"; // use centralized axios instance
+import API from "../src/axiosConfig";
 
 const ConfirmOrder = () => {
   const navigate = useNavigate();
@@ -13,75 +13,70 @@ const ConfirmOrder = () => {
 
   const [cartItems, setCartItems] = useState([]);
   const [userdata, setUserdata] = useState({});
+  const [loading, setLoading] = useState(true);
 
   // ==============================
-  // FETCH PRODUCT
+  // FETCH PRODUCT DETAILS
   // ==============================
   useEffect(() => {
-    const fetchProduct = async () => {
+    (async () => {
       try {
         const res = await API.get(`/product/${id}`);
-        const data = res.data.products || res.data;
+        const product = res.data.product || res.data;
 
-        const imagesArray = Array.isArray(data.images)
-          ? data.images
-          : data.image
-          ? [data.image]
-          : data.imagesList || [];
+        const image = Array.isArray(product.images)
+          ? product.images[0]
+          : product.image || "";
 
-        const itemObj = {
-          name: data.name,
-          price: Number(data.price),
-          quantity: 1,
-          image: imagesArray[0] || "",
-        };
+        setCartItems([
+          {
+            name: product.name,
+            price: Number(product.price),
+            quantity: 1,
+            image,
+          },
+        ]);
 
-        setCartItems([itemObj]);
+        setLoading(false);
       } catch (err) {
-        console.error("Product fetch error:", err.message);
+        console.error("Product fetch error:", err);
+        setLoading(false);
       }
-    };
-
-    fetchProduct();
+    })();
   }, [id]);
 
   // ==============================
   // FETCH USER PROFILE
   // ==============================
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    (async () => {
       try {
-        const storedUserId = localStorage.getItem("userId");
-        if (!storedUserId) return;
+        const uid = localStorage.getItem("userId");
+        if (!uid) return;
 
-        const res = await API.get(`/auth/profile/${storedUserId}`);
+        const res = await API.get(`/auth/profile/${uid}`);
         if (res.data.status) setUserdata(res.data.user);
       } catch (err) {
-        console.error("Profile fetch error:", err.message);
+        console.error("Profile fetch error:", err);
       }
-    };
-
-    fetchUserProfile();
+    })();
   }, []);
 
   // ==============================
-  // CART QUANTITY UPDATE
+  // UPDATE QUANTITY
   // ==============================
   const updateQuantity = (index, type) => {
     setCartItems((prev) =>
       prev.map((item, i) =>
         i === index
-          ? {
-              ...item,
-              quantity: type === "inc" ? item.quantity + 1 : Math.max(1, item.quantity - 1),
-            }
+          ? { ...item, quantity: type === "inc" ? item.quantity + 1 : Math.max(1, item.quantity - 1) }
           : item
       )
     );
   };
 
   // ==============================
-  // CALCULATE PRICES
+  // CART PRICE CALCULATIONS
   // ==============================
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shippingPrice = subtotal > 5000 ? 0 : 150;
@@ -91,28 +86,24 @@ const ConfirmOrder = () => {
   // ==============================
   // PAYMENT HANDLER
   // ==============================
-  const proceedToPayment = async (amount) => {
-    // Store order info locally
+  const proceedToPayment = async () => {
     localStorage.setItem(
       "orderInfo",
       JSON.stringify({ cartItems, shippingInfo, subtotal, shippingPrice, tax, totalPrice, user: userdata })
     );
 
     try {
-      const { data: orderData } = await API.post("/payment/process", { amount });
+      const { data: orderData } = await API.post("/payment/process", { amount: totalPrice });
       const { data: keyData } = await API.get("/getkey");
 
-      const { key } = keyData;
-      const { order } = orderData;
-
       const options = {
-        key,
-        amount: order.amount,
+        key: keyData.key,
+        amount: orderData.order.amount,
         currency: "INR",
         name: "Cashewnut",
-        description: "CashewNut E-commerce",
-        order_id: order.id,
-        handler: function (response) {
+        description: "Payment Checkout",
+        order_id: orderData.order.id,
+        handler: (response) => {
           localStorage.setItem(
             "paymentInfo",
             JSON.stringify({
@@ -131,12 +122,13 @@ const ConfirmOrder = () => {
         theme: { color: "#F37254" },
       };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      new window.Razorpay(options).open();
     } catch (err) {
-      console.error("Payment error:", err.message);
+      console.error("Payment error:", err);
     }
   };
+
+  if (loading) return <p style={{ textAlign: "center" }}>Loading product...</p>;
 
   return (
     <>
@@ -144,37 +136,43 @@ const ConfirmOrder = () => {
       <CheckoutSteps step1 step2 />
 
       <section className="confirmOrderPage">
-        {/* Shipping Info */}
         <div className="shippingBox">
           <h3>Shipping Information</h3>
           <div className="shippingDetail">
             <p><strong>Address:</strong> {shippingInfo.address}</p>
             <p><strong>City:</strong> {shippingInfo.city}</p>
             <p><strong>State:</strong> {shippingInfo.state}</p>
-            <p><strong>Country:</strong> {shippingInfo.country?.label}</p>
+            <p><strong>Country:</strong> {shippingInfo.country?.label || shippingInfo.country}</p>
             <p><strong>Postal Code:</strong> {shippingInfo.postalCode}</p>
             <p><strong>Phone:</strong> {shippingInfo.phone}</p>
           </div>
 
-          <button className="backBtn" onClick={() => navigate(`/productdeatils/${id}`)}>
-            ← Back to Cart
+          <button className="backBtn" onClick={() => navigate(`/productdetails/${id}`)}>
+            ← Back to Product
           </button>
         </div>
 
-        {/* Cart Items and Summary */}
         <div className="cartAndSummary">
           <div className="cartItemsBox">
             <h3>Your Cart Items</h3>
+
             {cartItems.map((item, index) => (
+              
               <div key={index} className="cartItemCard">
                 <img src={item.image} alt={item.name} />
                 <p>{item.name}</p>
+                {console.log(item)
+                }
+
                 <div className="quantityControl">
                   <button className="qtyBtn" onClick={() => updateQuantity(index, "dec")}>-</button>
                   <span className="qtyNumber">{item.quantity}</span>
                   <button className="qtyBtn" onClick={() => updateQuantity(index, "inc")}>+</button>
                 </div>
-                <span>{item.quantity} x ₹{item.price} = <strong>₹{item.price * item.quantity}</strong></span>
+
+                <span>
+                  {item.quantity} x ₹{item.price} = <strong>₹{item.price * item.quantity}</strong>
+                </span>
               </div>
             ))}
           </div>
@@ -185,10 +183,13 @@ const ConfirmOrder = () => {
               <div><span>Subtotal:</span><span>₹{subtotal}</span></div>
               <div><span>Shipping:</span><span>₹{shippingPrice}</span></div>
               <div><span>Tax (18%):</span><span>₹{tax.toFixed(2)}</span></div>
-              <div className="summaryTotal"><strong>Total:</strong><strong>₹{totalPrice.toFixed(2)}</strong></div>
+              <div className="summaryTotal">
+                <strong>Total:</strong>
+                <strong>₹{totalPrice.toFixed(2)}</strong>
+              </div>
             </div>
 
-            <button className="paymentBtn" onClick={() => proceedToPayment(totalPrice.toFixed(2))}>
+            <button className="paymentBtn" onClick={proceedToPayment}>
               Proceed to Payment
             </button>
           </div>

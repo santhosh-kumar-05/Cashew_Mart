@@ -46,24 +46,24 @@ const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  // Toast state
+  // Toast
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   const fetchProducts = async () => {
     try {
       const res = await API.get("/product");
       setProducts(res.data.products);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const fetchOrders = async () => {
     try {
-      const res = await API.get("/all");
+      const res = await API.get("/all"); // Orders route
       setOrders(res.data.orders);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
     fetchCustomers();
   }, []);
 
-  // ================= DELETE PRODUCT WITH CONFIRMATION =================
+  // ================= DELETE PRODUCT =================
   const handleDelete = async (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -91,30 +91,20 @@ const AdminDashboard = () => {
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, Delete it!",
+      confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           await API.delete(`/product/${id}`);
           setProducts(products.filter((p) => p._id !== id));
-
-          setToast({
-            show: true,
-            message: "Product Deleted Successfully!",
-            type: "success",
-          });
-        } catch (err) {
-          console.error(err);
-          setToast({
-            show: true,
-            message: "Failed to Delete Product!",
-            type: "error",
-          });
+          setToast({ show: true, message: "Product Deleted Successfully!", type: "success" });
+        } catch (error) {
+          console.error(error);
+          setToast({ show: true, message: "Failed to Delete Product!", type: "error" });
         }
       }
     });
   };
-  // ==============================================================
 
   const handlePageChange = (value) => {
     setPage(value);
@@ -149,11 +139,7 @@ const AdminDashboard = () => {
               <FontAwesomeIcon icon={faIndianRupeeSign} className="stat-icon" />
               <h5>Revenue</h5>
               <h2>
-                ₹
-                {orders.reduce(
-                  (sum, order) => sum + (order?.totalPrice || 0),
-                  0
-                )}
+                ₹{orders.reduce((sum, order) => sum + (order?.totalPrice || 0), 0)}
               </h2>
             </div>
 
@@ -167,12 +153,16 @@ const AdminDashboard = () => {
 
       case "addproduct":
         return <AddProduct refreshProducts={fetchProducts} setPage={setPage} />;
+
       case "updateproduct":
         return <AdminUpdateProduct id={selectedId} refreshProducts={fetchProducts} setPage={setPage} />;
+
       case "orders":
         return <AdminOrders />;
+
       case "customers":
         return <AdminMessages />;
+
       default:
         return <h3>Dashboard</h3>;
     }
@@ -181,28 +171,17 @@ const AdminDashboard = () => {
   return (
     <div className="admin-container">
       {toast.show && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast({ show: false, message: "", type: "" })}
-        />
+        <Toast message={toast.message} type={toast.type}
+          onClose={() => setToast({ show: false, message: "", type: "" })} />
       )}
 
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <h2 className="logo">MyAdmin</h2>
         <ul className="side-menu">
-          <li onClick={() => handlePageChange("dashboard")}>
-            <FontAwesomeIcon icon={faBoxOpen} /> Dashboard
-          </li>
-          <li onClick={() => handlePageChange("addproduct")}>
-            <FontAwesomeIcon icon={faPlus} /> Add Product
-          </li>
-          <li onClick={() => handlePageChange("orders")}>
-            <FontAwesomeIcon icon={faClipboardList} /> Orders
-          </li>
-          <li onClick={() => handlePageChange("customers")}>
-            <FontAwesomeIcon icon={faUsers} /> Customers
-          </li>
+          <li onClick={() => handlePageChange("dashboard")}><FontAwesomeIcon icon={faBoxOpen} /> Dashboard</li>
+          <li onClick={() => handlePageChange("addproduct")}><FontAwesomeIcon icon={faPlus} /> Add Product</li>
+          <li onClick={() => handlePageChange("orders")}><FontAwesomeIcon icon={faClipboardList} /> Orders</li>
+          <li onClick={() => handlePageChange("customers")}><FontAwesomeIcon icon={faUsers} /> Customers</li>
         </ul>
       </aside>
 
@@ -213,12 +192,15 @@ const AdminDashboard = () => {
       <main className="main-content">
         <nav className="top-navbar">
           <div className="left-nav">
-            <FontAwesomeIcon className="menu-icon mobile-menu-btn" icon={faBars} onClick={() => setSidebarOpen(true)} />
+            <FontAwesomeIcon className="menu-icon mobile-menu-btn"
+              icon={faBars} onClick={() => setSidebarOpen(true)} />
             <h3>{page.toUpperCase()}</h3>
           </div>
+
           <div className="right-nav">
             <FontAwesomeIcon className="nav-icon" icon={faBell} />
-            <FontAwesomeIcon className="nav-icon profile" icon={faUserCircle} onClick={() => setProfileOpen(true)} />
+            <FontAwesomeIcon className="nav-icon profile" icon={faUserCircle}
+              onClick={() => setProfileOpen(true)} />
           </div>
         </nav>
 
@@ -236,7 +218,10 @@ const AdminDashboard = () => {
             <div className="product-grid">
               {products.map((product) => (
                 <div className="product-card adpro" key={product._id}>
-                  <img src={`${product.image}`} alt={product.name} />
+                  <img
+                    src={product.images && product.images.length > 0 ? product.images[0] : "/placeholder.png"}
+                    alt={product.name}
+                  />
                   <h5 className="product-title">{product.name}</h5>
                   <p className="product-price">₹{product.price}</p>
                   <p className="product-stock">Stock: {product.stock}</p>

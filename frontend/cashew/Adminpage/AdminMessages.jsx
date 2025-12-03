@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import API from "../src/axiosConfig";
-import "../public/AdminMessages.css";
+import API from "../src/axiosConfig"; // central axios instance
+import "../public/AdminMessages.css"; // styling
 import { FaEnvelopeOpenText, FaSearch } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
@@ -11,6 +11,7 @@ const AdminMessages = () => {
   const [search, setSearch] = useState("");
   const [toast, setToast] = useState("");
 
+  // Fetch Messages
   const fetchMessages = async () => {
     try {
       const res = await API.get("/messages");
@@ -20,11 +21,13 @@ const AdminMessages = () => {
     }
   };
 
+  // Toast Notification Handler
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(""), 2500);
   };
 
+  // Delete Message
   const handleDelete = async (id) => {
     try {
       await API.delete(`/messages/${id}`);
@@ -41,6 +44,7 @@ const AdminMessages = () => {
     fetchMessages();
   }, []);
 
+  // Filter Search
   const filteredMessages = messages.filter((msg) =>
     msg.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -68,10 +72,7 @@ const AdminMessages = () => {
       <div className="msg-grid">
         {filteredMessages.map((msg) => (
           <div key={msg._id} className="msg-card">
-            <div
-              onClick={() => setSelectedMessage(msg)}
-              style={{ cursor: "pointer" }}
-            >
+            <div onClick={() => setSelectedMessage(msg)} style={{ cursor: "pointer" }}>
               <div className="msg-card-header">
                 <h3>{msg.name}</h3>
                 <small>{new Date(msg.createdAt).toLocaleDateString()}</small>
@@ -81,13 +82,8 @@ const AdminMessages = () => {
               <p className="msg-preview">{msg.message.slice(0, 80)}...</p>
             </div>
 
-            <button
-              className="delete-btnn"
-              onClick={(e) => {
-                e.stopPropagation();
-                setConfirmDelete(msg);
-              }}
-            >
+            {/* Delete Button */}
+            <button className="delete-btnn" onClick={() => setConfirmDelete(msg)}>
               <MdDelete size={18} /> Delete
             </button>
           </div>
@@ -107,10 +103,7 @@ const AdminMessages = () => {
             <div className="modal-msg">{selectedMessage.message}</div>
 
             <div className="modal-actions">
-              <button
-                className="close-btn"
-                onClick={() => setSelectedMessage(null)}
-              >
+              <button className="close-btn" onClick={() => setSelectedMessage(null)}>
                 Close
               </button>
             </div>
@@ -118,7 +111,7 @@ const AdminMessages = () => {
         </div>
       )}
 
-      {/* DELETE CONFIRM MODAL */}
+      {/* DELETE CONFIRMATION MODAL */}
       {confirmDelete && (
         <div className="modal-container">
           <div className="confirm-box">
@@ -129,10 +122,7 @@ const AdminMessages = () => {
               <button className="close-btn" onClick={() => setConfirmDelete(null)}>
                 Cancel
               </button>
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(confirmDelete._id)}
-              >
+              <button className="delete-btn" onClick={() => handleDelete(confirmDelete._id)}>
                 <MdDelete size={18} /> Delete
               </button>
             </div>

@@ -1,19 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../public/ProductDetails.css";
 import { useNavigate, useParams } from "react-router-dom";
-import API from "../src/axiosConfig"; // use your configured axios instance
+import API from "../src/axiosConfig";
 import UserNav from "../userauthpage/UserNav";
 import { ThreeDot } from "react-loading-indicators";
 
 // ICONS
-import {
-  FaStar,
-  FaRegStar,
-  FaHeart,
-  FaShippingFast,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
+import { FaStar, FaRegStar, FaHeart, FaShippingFast, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { RiPriceTag3Line } from "react-icons/ri";
 
@@ -34,21 +27,19 @@ const ProductDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ================================
   // FETCH PRODUCT
-  // ================================
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await API.get(`/product/${id}`); // uses API instance
-        const data = res.data.products || res.data;
+        const res = await API.get(`/product/${id}`); // your backend route
+        const data = res.data.product || res.data; // ensure single product
 
-        // Normalize images
+        // Ensure images is an array
         const images = Array.isArray(data.images)
           ? data.images
           : data.image
           ? [data.image]
-          : data.imagesList || [];
+          : [];
 
         const normalized = { ...data, images };
         normalized.price = Number(data.price) || 0;
@@ -57,7 +48,7 @@ const ProductDetails = () => {
 
         setReviews(normalized.reviews || []);
         setProduct(normalized);
-        setMainImage(normalized.images[0] || "");
+        setMainImage(normalized.images[0] || "/placeholder.png"); // fallback placeholder
       } catch (err) {
         console.error("fetch error:", err.message);
       }
@@ -81,9 +72,7 @@ const ProductDetails = () => {
   const totalMrp = product.mrp * qty;
   const rating = product.rating || 4.3;
 
-  // ================================
   // ADD TO CART
-  // ================================
   const handleAddToCart = () => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
@@ -96,7 +85,7 @@ const ProductDetails = () => {
         productId: product._id,
         name: product.name,
         price: product.price,
-        image: mainImage, // direct path
+        image: mainImage, // first image
         quantity: qty,
       })
     );
@@ -118,6 +107,8 @@ const ProductDetails = () => {
     }
     navigate(`/shiping/${id}`);
   };
+  console.log(product);
+  
 
   return (
     <section className="pd-page">
@@ -148,9 +139,7 @@ const ProductDetails = () => {
           <div className="thumbs-outer">
             <button
               className="thumb-arrow left"
-              onClick={() =>
-                thumbsRef.current.scrollBy({ left: -88, behavior: "smooth" })
-              }
+              onClick={() => thumbsRef.current.scrollBy({ left: -88, behavior: "smooth" })}
             >
               <FaChevronLeft />
             </button>
@@ -159,7 +148,7 @@ const ProductDetails = () => {
               {product.images?.map((img, idx) => (
                 <img
                   key={idx}
-                  src={img} // no base URL
+                  src={img || "/placeholder.png"}
                   className="thumb"
                   onClick={() => setMainImage(img)}
                   alt={`thumb-${idx}`}
@@ -169,20 +158,14 @@ const ProductDetails = () => {
 
             <button
               className="thumb-arrow right"
-              onClick={() =>
-                thumbsRef.current.scrollBy({ left: 88, behavior: "smooth" })
-              }
+              onClick={() => thumbsRef.current.scrollBy({ left: 88, behavior: "smooth" })}
             >
               <FaChevronRight />
             </button>
           </div>
 
           <div className="main-image-wrap">
-            <img
-              src={mainImage} // direct path
-              className="main-image-zoom"
-              alt={product.name}
-            />
+            <img src={mainImage} className="main-image-zoom" alt={product.name} />
           </div>
         </div>
 
@@ -193,9 +176,7 @@ const ProductDetails = () => {
           <div className="rating-row">
             <div className="stars">
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i}>
-                  {i < Math.floor(rating) ? <FaStar /> : <FaRegStar />}
-                </span>
+                <span key={i}>{i < Math.floor(rating) ? <FaStar /> : <FaRegStar />}</span>
               ))}
             </div>
             <div className="review-count">
@@ -214,7 +195,7 @@ const ProductDetails = () => {
             <ul className="offers">
               <li>Bank Offer: 5% instant discount</li>
               <li>Special Price: Extra 10% off</li>
-              <li>Combo: Buy 2 Get 1 Free</li>
+              {/* <li>Combo: Buy 2 Get 1 Free</li> */}
             </ul>
           </div>
 

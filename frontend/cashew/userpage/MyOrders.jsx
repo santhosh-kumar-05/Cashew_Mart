@@ -50,6 +50,8 @@ const MyOrders = () => {
         <div className="orders-grid">
           {orders.map((order) => (
             <div key={order._id} className="order-card">
+            {console.log(order)
+            }  
               <div className="order-header">
                 <span>Order #{order._id.slice(-6).toUpperCase()}</span>
                 <span className={`status ${order.status.toLowerCase()}`}>

@@ -44,28 +44,26 @@ const AddProduct = ({ refreshProducts, setPage }) => {
 
   // Submit form
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // ✅ Prevent default first
+
     try {
+      const formData = new FormData(); // ✅ Declare formData first
+
+      // Append product fields
+      Object.keys(product).forEach((key) => formData.append(key, product[key]));
+
+      // Append images
       if (images.length > 0) {
         images.forEach((file) => formData.append("images", file));
       }
 
-      const formData = new FormData();
-      Object.keys(product).forEach((key) => formData.append(key, product[key]));
-      images.forEach((file) => formData.append("images", file));
-
-      await API.post("/api/product", formData, {
+      // Send request
+      await API.post("/product", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setShowToast(true);
-      setProduct({
-        name: "",
-        category: "",
-        description: "",
-        price: "",
-        stock: "",
-      });
+      setProduct({ name: "", category: "", description: "", price: "", stock: "" });
       setImages([]);
       setPreviews([]);
 

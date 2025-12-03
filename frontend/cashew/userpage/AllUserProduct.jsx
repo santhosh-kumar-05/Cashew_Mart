@@ -5,7 +5,11 @@ import "../public/AllProduct.css";
 import { ThreeDot } from "react-loading-indicators";
 import { useNavigate } from "react-router-dom";
 
-import { AiOutlineShoppingCart, AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import {
+  AiOutlineShoppingCart,
+  AiOutlineHeart,
+  AiFillHeart,
+} from "react-icons/ai";
 import { FaStar, FaRegStar } from "react-icons/fa";
 
 import { useDispatch } from "react-redux";
@@ -29,7 +33,7 @@ const AllUserProduct = () => {
     let mounted = true;
     const fetchProducts = async () => {
       try {
-        const res = await api.get("/product");
+        const res = await api.get("/product"); // backend route
         if (!mounted) return;
 
         const products = res.data.products || res.data || [];
@@ -58,7 +62,8 @@ const AllUserProduct = () => {
         productId: product._id,
         name: product.name,
         price: product.price,
-        image: product.image || "",
+        image:
+          product.images && product.images.length > 0 ? product.images[0] : "",
         quantity: 1,
       })
     );
@@ -85,7 +90,9 @@ const AllUserProduct = () => {
       stars,
       rating: r.toFixed(1),
       reviews:
-        item.numReviews || item.reviews || Math.floor(Math.random() * 200) + 10,
+        item.numReviews ||
+        item.reviews?.length ||
+        Math.floor(Math.random() * 200) + 10,
     };
   };
 
@@ -94,11 +101,13 @@ const AllUserProduct = () => {
       <>
         <UserNav />
         <div className="loading-wrap">
-          <ThreeDot color="#32cd32" size="medium" text="Loading Product..." />
+          <ThreeDot color="#32cd32" size="medium" text="Loading Products..." />
         </div>
       </>
     );
   }
+  console.log(allProducts);
+  
 
   return (
     <section className="allproduct">
@@ -110,9 +119,9 @@ const AllUserProduct = () => {
         {error && <div className="ap-error">{error}</div>}
 
         <div className="ap-grid">
-          {allProducts.length === 0 && <div className="empty-msg">No products found</div>}
-          {console.log(allProducts)
-          }
+          {allProducts.length === 0 && (
+            <div className="empty-msg">No products found</div>
+          )}
 
           {allProducts.map((item) => {
             const id = item._id || item.id;
@@ -123,9 +132,16 @@ const AllUserProduct = () => {
                 <div
                   className="ap-card-media"
                   onClick={() => navigate(`/productdetails/${id}`)}
-
                 >
-                  <img src={item.image} alt={item.name} className="ap-card-img" />
+                  <img
+                    src={
+                      item.images && item.images.length > 0
+                        ? item.images[0]
+                        : "/placeholder.png"
+                    }
+                    alt={item.name}
+                    className="ap-card-img"
+                  />
                 </div>
 
                 <Card.Body className="ap-card-body">
@@ -135,12 +151,16 @@ const AllUserProduct = () => {
 
                   <div className="ap-sub">
                     <div className="ap-price">₹{item.price}</div>
-                    <div className="ap-mrp">MRP ₹{item.mrp ?? Math.round(item.price * 1.12)}</div>
+                    <div className="ap-mrp">
+                      MRP ₹{item.mrp ?? Math.round(item.price * 1.12)}
+                    </div>
                   </div>
 
                   <div className="ap-rating-row">
                     <div className="ap-stars">{stars}</div>
-                    <div className="ap-rating-text">{rating} • {reviews}</div>
+                    <div className="ap-rating-text">
+                      {rating} • {reviews}
+                    </div>
                   </div>
                 </Card.Body>
 
@@ -152,7 +172,8 @@ const AllUserProduct = () => {
                       onClick={() => addToCart(item)}
                       title="Add to cart"
                     >
-                      <AiOutlineShoppingCart /> <span className="ap-btn-text">Add</span>
+                      <AiOutlineShoppingCart />{" "}
+                      <span className="ap-btn-text">Add</span>
                     </Button>
 
                     <Button
@@ -165,10 +186,16 @@ const AllUserProduct = () => {
                   </div>
 
                   <button
-                    className={`ap-wish-btn ${wishlist.includes(id) ? "saved" : ""}`}
+                    className={`ap-wish-btn ${
+                      wishlist.includes(id) ? "saved" : ""
+                    }`}
                     onClick={() => toggleWishlist(id)}
                   >
-                    {wishlist.includes(id) ? <AiFillHeart /> : <AiOutlineHeart />}
+                    {wishlist.includes(id) ? (
+                      <AiFillHeart />
+                    ) : (
+                      <AiOutlineHeart />
+                    )}
                   </button>
                 </Card.Footer>
               </Card>

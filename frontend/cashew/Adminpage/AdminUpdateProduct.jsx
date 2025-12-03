@@ -18,7 +18,6 @@ const AdminUpdateProduct = ({ id, refreshProducts, setPage }) => {
   const [preview, setPreview] = useState(null);
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
-  // Toast component inside same page
   const Toast = ({ message, type }) => (
     <div className={`toast-container ${type}`}>
       <span className="toast-icon">{type === "success" ? "✔" : "✖"}</span>
@@ -26,12 +25,11 @@ const AdminUpdateProduct = ({ id, refreshProducts, setPage }) => {
     </div>
   );
 
-  // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await API.get(`/product/${id}`);
-        const p = res.data.products;
+        const p = res.data.product;
 
         setProduct({
           name: p.name,
@@ -41,7 +39,10 @@ const AdminUpdateProduct = ({ id, refreshProducts, setPage }) => {
           stock: p.stock,
         });
 
-        if (p.image) setPreview(p.image);
+        // Direct Cloudinary preview
+        if (p.images && p.images.length > 0) {
+          setPreview(p.images[0]);
+        }
       } catch (err) {
         setToast({
           show: true,
@@ -61,15 +62,21 @@ const AdminUpdateProduct = ({ id, refreshProducts, setPage }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
-    if (file) setPreview(URL.createObjectURL(file));
+    if (file) setPreview(URL.createObjectURL(file)); // Temporary preview
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      Object.keys(product).forEach((key) => formData.append(key, product[key]));
-      if (image) formData.append("image", image);
+
+      Object.keys(product).forEach((key) =>
+        formData.append(key, product[key])
+      );
+
+      if (image) {
+        formData.append("images", image); // Correct name for multer upload
+      }
 
       await API.put(`/product/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -83,10 +90,15 @@ const AdminUpdateProduct = ({ id, refreshProducts, setPage }) => {
 
       setTimeout(() => {
         if (refreshProducts) refreshProducts();
-        setPage("dashboard"); // <- Now working
+        setPage("dashboard");
       }, 1000);
     } catch (err) {
-      setToast({ show: true, message: "Update Failed!", type: "error" });
+      console.log(err);
+      setToast({
+        show: true,
+        message: "Update Failed!",
+        type: "error",
+      });
     }
   };
 
@@ -164,7 +176,7 @@ const AdminUpdateProduct = ({ id, refreshProducts, setPage }) => {
 
           {preview && (
             <div className="image-preview">
-              <img src={preview} alt="preview" />
+              <img src={preview} alt="Preview" />
             </div>
           )}
 

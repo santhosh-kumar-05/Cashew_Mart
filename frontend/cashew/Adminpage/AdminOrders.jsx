@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API from "../src/axiosConfig";  // ⬅ use central axios instance
+import API from "../src/axiosConfig";
 import "../public/AdminOrders.css";
 
 const AdminOrders = () => {
@@ -10,10 +10,10 @@ const AdminOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await API.get("/all");  // ⬅ baseURL added automatically
+        const res = await API.get("/all");  // FIXED: Correct route
         setOrders(res.data.orders);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching orders:", error);
       }
     };
     fetchOrders();
@@ -99,7 +99,7 @@ const AdminOrders = () => {
               <h3>Items Ordered</h3>
               {selectedOrder.cartItems.map((i, idx) => (
                 <div className="item-row" key={idx}>
-                  <img src={`${i.image}`} alt="" />
+                  <img src={i.image} alt={i.name} />
                   <div>
                     <p><strong>{i.name}</strong></p>
                     <p>Qty: {i.quantity}</p>
