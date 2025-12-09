@@ -33,7 +33,7 @@ const AllUserProduct = () => {
     let mounted = true;
     const fetchProducts = async () => {
       try {
-        const res = await api.get("/product"); // backend route
+        const res = await api.get("/product");
         if (!mounted) return;
 
         const products = res.data.products || res.data || [];
@@ -96,6 +96,7 @@ const AllUserProduct = () => {
     };
   };
 
+  // Loading UI
   if (isLoading) {
     return (
       <>
@@ -106,8 +107,6 @@ const AllUserProduct = () => {
       </>
     );
   }
-  console.log(allProducts);
-  
 
   return (
     <section className="allproduct">
@@ -119,7 +118,8 @@ const AllUserProduct = () => {
         {error && <div className="ap-error">{error}</div>}
 
         <div className="ap-grid">
-          {allProducts.length === 0 && (
+          {/* FIXED - Only show empty message after loading */}
+          {!isLoading && allProducts.length === 0 && (
             <div className="empty-msg">No products found</div>
           )}
 
@@ -131,7 +131,7 @@ const AllUserProduct = () => {
               <Card className="ap-card" key={id}>
                 <div
                   className="ap-card-media"
-                  onClick={() => navigate(`/productdetails/${id}`)}
+                  onClick={() => navigate(`/productdeatils/${id}`)}
                 >
                   <img
                     src={
@@ -191,11 +191,7 @@ const AllUserProduct = () => {
                     }`}
                     onClick={() => toggleWishlist(id)}
                   >
-                    {wishlist.includes(id) ? (
-                      <AiFillHeart />
-                    ) : (
-                      <AiOutlineHeart />
-                    )}
+                    {wishlist.includes(id) ? <AiFillHeart /> : <AiOutlineHeart />}
                   </button>
                 </Card.Footer>
               </Card>

@@ -107,7 +107,7 @@ const ProductDetails = () => {
     }
     navigate(`/shiping/${id}`);
   };
-  console.log(product);
+  
   
 
   return (

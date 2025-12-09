@@ -55,7 +55,7 @@ const Product = () => {
       {/* ---------------------- WELCOME SECTION ----------------------- */}
       <section className="welcome-section" id="home">
         <div className="welcome-left">
-          <h1 className="welcome-title">Welcome to Cashew Delights</h1>
+          <h1 className="welcome-title">Welcome to Cashew Mart</h1>
           <p className="welcome-sub">Premium • Fresh • Authentic Cashews</p>
           <p className="welcome-desc">
             Enjoy the finest handpicked cashews directly sourced from organic farms. 

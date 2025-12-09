@@ -161,8 +161,7 @@ const ConfirmOrder = () => {
               <div key={index} className="cartItemCard">
                 <img src={item.image} alt={item.name} />
                 <p>{item.name}</p>
-                {console.log(item)
-                }
+             
 
                 <div className="quantityControl">
                   <button className="qtyBtn" onClick={() => updateQuantity(index, "dec")}>-</button>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -18,6 +18,8 @@ const UserNav = () => {
   const [userData, setUserData] = useState(null);
   const [cartCount, setCartCount] = useState(0);
 
+  const profileRef = useRef(null); // Refs for outside click
+
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
@@ -33,6 +35,23 @@ const UserNav = () => {
     const storedCart = JSON.parse(localStorage.getItem("cartItems")) || [];
     setCartCount(storedCart.length);
   }, []);
+
+  // Outside click close effect
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+
+    if (profileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [profileOpen]);
 
   const toggleProfile = () => setProfileOpen(!profileOpen);
 
@@ -83,8 +102,7 @@ const UserNav = () => {
             {userData ? (
               <li>
                 <button className="profile-btn" onClick={toggleProfile}>
-                  <FontAwesomeIcon icon={faUserCircle} className="me-1" />{" "}
-                  Profile
+                  <FontAwesomeIcon icon={faUserCircle} className="me-1" /> Profile
                 </button>
               </li>
             ) : (
@@ -93,8 +111,7 @@ const UserNav = () => {
                   className="login-btn"
                   onClick={() => navigate("/userlogin")}
                 >
-                  <FontAwesomeIcon icon={faRightToBracket} className="me-1" />{" "}
-                  Login
+                  <FontAwesomeIcon icon={faRightToBracket} className="me-1" /> Login
                 </button>
               </li>
             )}
@@ -138,7 +155,7 @@ const UserNav = () => {
       {/* PROFILE DROPDOWN */}
       {profileOpen && (
         <div className="profile-dropdown-container">
-          <div className="profile-card">
+          <div className="profile-card" ref={profileRef}> {/* ref moved here */}
             <div className="profile-header">
               <FontAwesomeIcon
                 icon={faUserCircle}
@@ -148,9 +165,6 @@ const UserNav = () => {
               <p>{userData ? userData.email : "guest@example.com"}</p>
             </div>
 
-            {/* <button className="profile-menu-item" onClick={() => navigate("/profile")}>
-              👤 My Profile
-            </button> */}
             <button
               className="profile-menu-item"
               onClick={() => navigate("/myorder")}

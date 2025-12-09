@@ -22,7 +22,6 @@ const Cartt = () => {
     dispatch(removeItem(id));
   };
 
-  console.log(cartproduct);
   
 
   if (loading)
